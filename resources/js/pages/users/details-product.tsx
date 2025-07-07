@@ -116,19 +116,25 @@ export default function DetailsProduct() {
                                 <div className="flex flex-col items-start gap-2 md:min-w-52">
                                     <div className="grid w-full max-w-lg items-center gap-3">
                                         <Label htmlFor="quantity-input">Quantity</Label>
-                                        <QuantityInput value={quantity} onChange={(value) => setQuantity(value)} />
+                                        <QuantityInput
+                                            value={quantity}
+                                            max={product.stock}
+                                            disabled={product.stock <= 0}
+                                            onChange={(value) => setQuantity(value)}
+                                        />
                                     </div>
                                     <div className="flex w-full flex-col justify-start gap-2">
                                         <Button
                                             onClick={() => {
                                                 addToCart(product.slug, quantity);
                                             }}
+                                            disabled={product.stock <= 0}
                                             variant="outline"
                                         >
                                             Add to Cart
                                         </Button>
                                         <Button
-                                            disabled={isLoading}
+                                            disabled={isLoading || product.stock <= 0}
                                             onClick={() => {
                                                 setIsLoading(true);
                                                 fetchCheckoutRedirectUrl(

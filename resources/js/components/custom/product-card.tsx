@@ -7,9 +7,10 @@ import { forwardRef, useEffect, useState } from 'react';
 
 type ProductCardProps = {
     product: Product;
+    disabled?: boolean;
 };
 
-const ProductCard = forwardRef<HTMLDivElement, ProductCardProps>(({ product }, ref) => {
+const ProductCard = forwardRef<HTMLDivElement, ProductCardProps>(({ product, disabled = false }, ref) => {
     const addToCart = useCartStore((state) => state.addToCart);
     const [isAnimating, setIsAnimating] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -82,7 +83,7 @@ const ProductCard = forwardRef<HTMLDivElement, ProductCardProps>(({ product }, r
                     <div className="flex space-x-3">
                         <Button
                             className="grow"
-                            disabled={isLoading}
+                            disabled={isLoading || disabled}
                             onClick={() => {
                                 setIsLoading(true);
                                 fetchCheckoutRedirectUrl(
@@ -123,6 +124,7 @@ const ProductCard = forwardRef<HTMLDivElement, ProductCardProps>(({ product }, r
                         }}
                         className={`grow ${isAnimating ? 'animate-pulse' : ''}`}
                         variant="outline"
+                        disabled={isLoading || disabled}
                     >
                         Add to Cart
                     </Button>
