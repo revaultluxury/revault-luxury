@@ -11,7 +11,6 @@ import {
     PaginationNext,
     PaginationPrevious,
 } from '@/components/ui/pagination';
-import { useSidebar } from '@/components/ui/sidebar';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useDebouncedValue } from '@/hooks/use-debounced';
 import AdminLayout from '@/layouts/custom/admin-layout';
@@ -22,7 +21,6 @@ import { toast } from 'sonner';
 
 export default function ShowProducts() {
     const { products, search } = usePage<SharedData & { products: PaginatedResponse<Product>; search: string }>().props;
-    const { open } = useSidebar();
     const [input, setInput] = useState<string>(search);
     const initialLoad = useRef<boolean>(true);
     const debouncedValue = useDebouncedValue(input, 500);
@@ -49,10 +47,8 @@ export default function ShowProducts() {
                     <CardTitle>View Products</CardTitle>
                     <CardDescription>List of products</CardDescription>
                 </CardHeader>
-                <CardContent className="mx-auto">
-                    <div
-                        className={`${open ? 'max-w-xs md:max-w-lg lg:max-w-3xl' : 'max-w-xs md:max-w-2xl lg:max-w-full'} space-y-5 overflow-x-auto`}
-                    >
+                <CardContent className="">
+                    <div className={`w-full space-y-5 overflow-x-auto whitespace-nowrap`}>
                         <div className="flex p-4">
                             <Input type="text" placeholder="Search by title" value={input} onChange={(e) => setInput(e.target.value)} />
                         </div>

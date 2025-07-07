@@ -123,6 +123,8 @@ class UserController extends Controller
                 break;
         }
 
+        $query->orderByRaw('CASE WHEN stock > 0 THEN 0 ELSE 1 END');
+
         $products = $query->cursorPaginate(12)->withQueryString();
 
         $parameter = [];
@@ -275,6 +277,7 @@ class UserController extends Controller
         }
 
         $item = $request->input('items', []);
+
         $validator = $this->checkoutValidation($item);
 
         if ($validator->fails()) {
@@ -284,9 +287,26 @@ class UserController extends Controller
             ], 422);
         }
 
+        $products = Product::whereIn('slug', collect($item)->pluck('slug'))
+            ->where('status', 'active')
+            ->get();
+
+        $filteredItems = collect($item)->filter(function ($i) use ($products) {
+            $product = $products->firstWhere('slug', $i['slug']);
+
+            return $product && $i['qty'] <= $product->stock;
+        })->values();
+
+        // Step 3: Return error if all items are invalid
+        if ($filteredItems->isEmpty()) {
+            return response()->json([
+                'message' => 'All selected items are either out of stock or exceed available quantity.',
+            ], 400);
+        }
+
         $result = Checkout::create([
             'path' => str_replace('-', '', Str::uuid7()->toString()),
-            'items' => $item,
+            'items' => $filteredItems,
             'expired_at' => now()->addDay(),
         ]);
 
@@ -466,7 +486,7 @@ class UserController extends Controller
                 'referenceId' => $transactionHeader->invoice_number,
                 'returnUrl' => route('index'), //todo
                 'cancelUrl' => route('index'), //todo
-                'notifyUrl' => route('index'), //todo
+                'notifyUrl' => route('checkout.notification'),
                 'buyerName' => $transactionHeader->customer_billing_first_name . ' ' . $transactionHeader->customer_billing_last_name,
                 ...(filter_var($transactionHeader->customer_contact, FILTER_VALIDATE_EMAIL)
                     ? ['buyerEmail' => $transactionHeader->customer_contact]
@@ -486,6 +506,7 @@ class UserController extends Controller
 
             $checkout->update([
                 'redirect_url' => $paymentGatewayResponse['Data']['Url'],
+                'transaction_id' => $transactionHeader->id,
             ]);
 
             \DB::commit();

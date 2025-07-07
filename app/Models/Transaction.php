@@ -72,4 +72,9 @@ class Transaction extends Model
     {
         return $this->hasMany(DetailTransaction::class);
     }
+
+    public function payment(): HasOne
+    {
+        return $this->hasOne(Payment::class,);
+    }
 }

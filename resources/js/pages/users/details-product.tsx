@@ -4,16 +4,21 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Carousel, CarouselApi, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { Label } from '@/components/ui/label';
 import MainLayout from '@/layouts/custom/main-layout';
+import { fetchCheckoutRedirectUrl } from '@/lib/utils';
+import { useCartStore } from '@/stores/cart';
 import { Product, SharedData } from '@/types';
-import { usePage } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 
 export default function DetailsProduct() {
     const { product } = usePage<SharedData & { product: Product }>().props;
     const [api, setApi] = useState<CarouselApi>();
+    const addToCart = useCartStore((state) => state.addToCart);
 
     const [current, setCurrent] = useState(0);
     const [count, setCount] = useState(0);
+    const [quantity, setQuantity] = useState<number>(1);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     useEffect(() => {
         if (!api) {
@@ -90,7 +95,7 @@ export default function DetailsProduct() {
                     </div>
                 </Carousel>
                 <section className={`container mx-auto my-3 space-y-3 px-4`}>
-                    <div className="lg:flex lg:flex-row-reverse lg:gap-3 lg:space-y-0">
+                    <div className="space-y-5 lg:flex lg:flex-row-reverse lg:gap-3 lg:space-y-0">
                         <Card className="lg:h-fit lg:min-w-96">
                             <CardHeader className="flex flex-col md:flex-row lg:flex-col">
                                 <div className="mb-2 grow">
@@ -111,11 +116,48 @@ export default function DetailsProduct() {
                                 <div className="flex flex-col items-start gap-2 md:min-w-52">
                                     <div className="grid w-full max-w-lg items-center gap-3">
                                         <Label htmlFor="quantity-input">Quantity</Label>
-                                        <QuantityInput />
+                                        <QuantityInput
+                                            value={quantity}
+                                            max={product.stock}
+                                            disabled={product.stock <= 0}
+                                            onChange={(value) => setQuantity(value)}
+                                        />
                                     </div>
                                     <div className="flex w-full flex-col justify-start gap-2">
-                                        <Button variant="outline">Add to Cart</Button>
-                                        <Button>Buy It Now</Button>
+                                        <Button
+                                            onClick={() => {
+                                                addToCart(product.slug, quantity);
+                                            }}
+                                            disabled={product.stock <= 0}
+                                            variant="outline"
+                                        >
+                                            Add to Cart
+                                        </Button>
+                                        <Button
+                                            disabled={isLoading || product.stock <= 0}
+                                            onClick={() => {
+                                                setIsLoading(true);
+                                                fetchCheckoutRedirectUrl(
+                                                    {
+                                                        slug: product.slug,
+                                                        qty: 1,
+                                                    },
+                                                    {
+                                                        onSuccess: (checkoutUrl) => {
+                                                            router.get(checkoutUrl);
+                                                        },
+                                                        onError: (error) => {
+                                                            console.error('Error fetching checkout URL:', error);
+                                                        },
+                                                        onFinally: () => {
+                                                            setIsLoading(false);
+                                                        },
+                                                    },
+                                                );
+                                            }}
+                                        >
+                                            Buy It Now
+                                        </Button>
                                     </div>
                                 </div>
                             </CardHeader>

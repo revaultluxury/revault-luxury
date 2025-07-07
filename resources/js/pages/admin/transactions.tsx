@@ -11,7 +11,6 @@ import {
     PaginationNext,
     PaginationPrevious,
 } from '@/components/ui/pagination';
-import { useSidebar } from '@/components/ui/sidebar';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useDebouncedValue } from '@/hooks/use-debounced';
 import AdminLayout from '@/layouts/custom/admin-layout';
@@ -27,7 +26,6 @@ export default function AdminTransactions() {
         }
     >().props;
     const [openTransactionId, setOpenTransactionId] = useState<string | null>(null);
-    const { open } = useSidebar();
     const [input, setInput] = useState<string>(search);
     const initialLoad = useRef<boolean>(true);
     const debouncedValue = useDebouncedValue(input, 500);
@@ -51,13 +49,11 @@ export default function AdminTransactions() {
         <>
             <Card>
                 <CardHeader>
-                    <CardTitle>View Products</CardTitle>
-                    <CardDescription>List of products</CardDescription>
+                    <CardTitle>View Transactions</CardTitle>
+                    <CardDescription>List of transactions</CardDescription>
                 </CardHeader>
-                <CardContent className="mx-auto">
-                    <div
-                        className={`${open ? 'max-w-xs md:max-w-lg lg:max-w-3xl' : 'max-w-xs md:max-w-2xl lg:max-w-full'} space-y-5 overflow-x-auto`}
-                    >
+                <CardContent className="">
+                    <div className={`w-full space-y-5 overflow-x-auto whitespace-nowrap`}>
                         <div className="flex p-4">
                             <Input type="text" placeholder="Search by invoice number" value={input} onChange={(e) => setInput(e.target.value)} />
                         </div>

@@ -44,3 +44,7 @@ Route::prefix('admin')->group(function () {
         Route::post('/logout', [\App\Http\Controllers\AdminController::class, 'logout'])->name('admin.logout');
     });
 });
+
+Route::post('/checkout/notification', [\App\Http\Controllers\PaymentController::class, 'notification'])
+    ->name('checkout.notification')
+    ->withoutMiddleware('web');

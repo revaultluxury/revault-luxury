@@ -456,7 +456,9 @@ export default function ProductsPerCategory() {
                                 <p>No products found</p>
                             </div>
                         }
-                        renderItem={(product: Product, ref) => <ProductCard ref={ref} key={product.id} product={product} />}
+                        renderItem={(product: Product, ref) => (
+                            <ProductCard disabled={product.stock <= 0} ref={ref} key={product.id} product={product} />
+                        )}
                     />
 
                     {/*<div className="mt-5 flex w-full justify-center">*/}

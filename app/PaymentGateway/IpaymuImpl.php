@@ -18,7 +18,7 @@ class IpaymuImpl implements PaymentGateway
         $this->baseUrl = config('services.ipaymu.base_url', 'https://my.ipaymu.com/api/v2');
     }
 
-    protected function generateSignature($method, array $body): string
+    public function generateSignature($method, array $body): string
     {
         $jsonBody = json_encode($body, JSON_UNESCAPED_SLASHES);
         $hashedBody = strtolower(hash('sha256', $jsonBody));
@@ -47,6 +47,28 @@ class IpaymuImpl implements PaymentGateway
 
             if ($response->failed()) {
                 throw new \Exception('Failed to redirect payment: ' . $response->body());
+            }
+
+            return $response->json();
+        } catch (ConnectionException $e) {
+            throw new \Exception('Connection error: ' . $e->getMessage());
+        }
+    }
+
+    public function check(string $transactionId): array
+    {
+        $endpoint = $this->baseUrl . '/transaction';
+
+        $payload = [
+            'transactionId' => $transactionId,
+        ];
+
+        $headers = $this->getHeaders(Supported_Http_Method::POST, $payload);
+        try {
+            $response = Http::withHeaders($headers)->post($endpoint, $payload);
+
+            if ($response->failed()) {
+                throw new \Exception('Failed to get recent payment data: ' . $response->body());
             }
 
             return $response->json();

@@ -174,6 +174,7 @@ const ShoppingCart = () => {
                                                             <QuantityInput
                                                                 value={item.qty}
                                                                 max={item.stock}
+                                                                disabled={item.stock <= 0}
                                                                 onChange={(value) => handleUpdateCartQty(item.slug, value)}
                                                             />
                                                             <Button onClick={() => handleDeleteCart(item.slug)} variant="destructive">
@@ -220,6 +221,7 @@ const ShoppingCart = () => {
                                             },
                                             onError: (error) => {
                                                 console.error('Error fetching checkout URL:', error);
+                                                router.reload();
                                             },
                                         },
                                     );
