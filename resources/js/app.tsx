@@ -1,7 +1,6 @@
 import '../css/app.css';
 
 import { createInertiaApp } from '@inertiajs/react';
-import { LaravelReactI18nProvider } from 'laravel-react-i18n';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createRoot } from 'react-dom/client';
 
@@ -13,11 +12,7 @@ createInertiaApp({
     setup({ el, App, props }) {
         const root = createRoot(el);
 
-        root.render(
-            <LaravelReactI18nProvider fallbackLocale={'en'} files={import.meta.glob('/lang/*.json')}>
-                <App {...props} />
-            </LaravelReactI18nProvider>,
-        );
+        root.render(<App {...props} />);
     },
     progress: {
         color: '#4B5563',
