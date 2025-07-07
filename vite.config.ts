@@ -14,11 +14,6 @@ export default defineConfig({
         react(),
         tailwindcss(),
     ],
-    server: {
-        cors: {
-            origin: 'https://d9ab-110-137-101-223.ngrok-free.app',
-        },
-    },
     esbuild: {
         jsx: 'automatic',
     },

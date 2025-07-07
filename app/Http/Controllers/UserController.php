@@ -264,7 +264,7 @@ class UserController extends Controller
         return \Illuminate\Support\Facades\Validator::make(['items' => $data], [
             'items' => 'required|array',
             'items.*.slug' => 'required|string|exists:products,slug',
-            'items.*.qty' => 'required|integer|min:1|',
+            'items.*.qty' => 'required|integer|min:1',
         ]);
     }
 
