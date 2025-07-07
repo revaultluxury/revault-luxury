@@ -6,10 +6,9 @@ import { InertiaFormProps } from '@inertiajs/react';
 type UserDetailsProps = {
     form: InertiaFormProps<CheckoutForm>;
     type: 'shipping' | 'billing';
-    differentBilling?: boolean;
 };
 
-export const UserDetails = ({ form, type, differentBilling = false }: UserDetailsProps) => {
+export const UserDetails = ({ form, type }: UserDetailsProps) => {
     const { setData, data, errors } = form;
     const userData = data[type];
 

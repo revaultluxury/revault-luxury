@@ -1,4 +1,4 @@
-import { AccordionState, BillingState, CheckoutForm, CheckoutItem } from '@/types';
+import { BillingState, CheckoutForm, CheckoutItem } from '@/types';
 
 import { AccordionDisc } from '@/components/custom/checkout/accordion-disc';
 import { OrderItem } from '@/components/custom/checkout/order-item';
@@ -13,10 +13,8 @@ import { InertiaFormProps } from '@inertiajs/react';
 
 const BILLING_OPTIONS: BillingState[] = ['same', 'different'];
 
-type MobileFormProps = {
+type DesktopFormProps = {
     form: InertiaFormProps<CheckoutForm>;
-    orderAccordion: AccordionState;
-    setOrderAccordion: (state: AccordionState) => void;
     billingState: BillingState;
     setBillingState: (state: BillingState) => void;
     checkoutItems: CheckoutItem[];
@@ -24,19 +22,8 @@ type MobileFormProps = {
     onSubmit: (e: React.FormEvent) => void;
 };
 
-export const CheckoutDesktopForm = ({
-    form,
-    orderAccordion,
-    setOrderAccordion,
-    billingState,
-    setBillingState,
-    checkoutItems,
-    total,
-    onSubmit,
-}: MobileFormProps) => {
+export const CheckoutDesktopForm = ({ form, billingState, setBillingState, checkoutItems, total, onSubmit }: DesktopFormProps) => {
     const { data, setData, errors } = form;
-
-    const toggleOrderAccordion = () => setOrderAccordion(orderAccordion === 'close' ? 'open' : 'close');
 
     return (
         <form onSubmit={onSubmit} className="hidden lg:block">
