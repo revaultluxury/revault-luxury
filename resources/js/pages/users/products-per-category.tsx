@@ -62,7 +62,7 @@ function FilterBadge({ label, onClear }: FilterBadgeProps) {
     );
 }
 
-const ProductCardSkeleton = forwardRef<HTMLDivElement, {}>((_, ref) => {
+const ProductCardSkeleton = forwardRef<HTMLDivElement, unknown>((_, ref) => {
     return (
         <div
             ref={ref}
