@@ -157,9 +157,9 @@ const ShoppingCart = () => {
                                             <li key={item.id} className="flex items-center justify-between border-b pb-2">
                                                 <div className="flex items-center gap-2">
                                                     <img
-                                                        src={'https://placehold.jp/c7c7c7/ffffff/900x900.jpg?text=Coming%20Soon'}
+                                                        src={item.galleries[0].media_url}
                                                         alt={item.title}
-                                                        className="size-20 rounded"
+                                                        className="size-20 rounded object-contain"
                                                     />
                                                     <div className="flex flex-col">
                                                         <span className="text-lg font-bold">{item.title}</span>
