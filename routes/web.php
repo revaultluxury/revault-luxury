@@ -3,7 +3,21 @@
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [\App\Http\Controllers\UserController::class, 'welcome'])->name('index');
-Route::get('/about-us', [\App\Http\Controllers\UserController::class, 'aboutUs'])->name('about-us');
+
+Route::prefix('/pages')->group(function () {
+    Route::get('/faq', [\App\Http\Controllers\WebsiteController::class, 'faq'])->name('pages.faq');
+    Route::get('/payments', [\App\Http\Controllers\WebsiteController::class, 'payments'])->name('pages.payments');
+    Route::get('/shipping', [\App\Http\Controllers\WebsiteController::class, 'shipping'])->name('pages.shipping');
+    Route::get('/returns', [\App\Http\Controllers\WebsiteController::class, 'returns'])->name('pages.returns');
+    Route::get('/cancellations', [\App\Http\Controllers\WebsiteController::class, 'cancellations'])->name('pages.cancellations');
+
+    Route::get('/contact-us', [\App\Http\Controllers\WebsiteController::class, 'contactUs'])->name('pages.contact-us');
+    Route::get('/about-us', [\App\Http\Controllers\WebsiteController::class, 'aboutUs'])->name('pages.about-us');
+
+    Route::get('/privacy-policy', [\App\Http\Controllers\WebsiteController::class, 'privacyPolicy'])->name('pages.privacy-policy');
+    Route::get('/cookie-policy', [\App\Http\Controllers\WebsiteController::class, 'cookiesPolicy'])->name('pages.cookies-policy');
+});
+
 Route::post('/cart', [\App\Http\Controllers\UserController::class, 'cart'])->name('products.cart');
 Route::prefix('/checkout')->group(function () {
     Route::post('/create', [\App\Http\Controllers\UserController::class, 'checkoutCreate'])

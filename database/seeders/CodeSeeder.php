@@ -12,7 +12,7 @@ class CodeSeeder extends Seeder
      */
     public function run(): void
     {
-        Code::create([
+        Code::firstOrCreate([
             'access_code' => '123',
         ]);
     }

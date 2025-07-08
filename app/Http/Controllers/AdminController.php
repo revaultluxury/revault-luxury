@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
 use App\Models\Code;
 use App\Models\Product;
 use App\Models\ProductGallery;
+use Database\Seeders\CategorySeeder;
+use Database\Seeders\StaticWebsiteDatumSeeder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
@@ -34,19 +35,15 @@ class AdminController extends Controller
             'access_code' => $accessCode ?: '123',
         ]);
 
-        $categories = [
-            'Watches',
-            'Luxury Watches',
-            'Luxury Bags',
-            'Luxury Accessories',
-        ];
+        \Artisan::call('db:seed', [
+            '--class' => CategorySeeder::class,
+            '--force' => true,
+        ]);
 
-        foreach ($categories as $title) {
-            Category::firstOrCreate([
-                'slug' => Str::slug($title),
-                'name' => $title,
-            ]);
-        }
+        \Artisan::call('db:seed', [
+            '--class' => StaticWebsiteDatumSeeder::class,
+            '--force' => true,
+        ]);
 
         return response()->json([
             'message' => 'Code seeded successfully with ID: ' . $code->id
