@@ -47,11 +47,6 @@ class UserController extends Controller
         ]);
     }
 
-    public function aboutUs()
-    {
-        return Inertia::render('users/about-us');
-    }
-
     public function detailsProduct(string $slug)
     {
         $product = \App\Models\Product::with(['category', 'galleries'])

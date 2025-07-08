@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
 use App\Models\Code;
 use App\Models\Product;
 use App\Models\ProductGallery;
+use Database\Seeders\CategorySeeder;
+use Database\Seeders\StaticWebsiteDatumSeeder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
@@ -34,19 +35,15 @@ class AdminController extends Controller
             'access_code' => $accessCode ?: '123',
         ]);
 
-        $categories = [
-            'Watches',
-            'Luxury Watches',
-            'Luxury Bags',
-            'Luxury Accessories',
-        ];
+        \Artisan::call('db:seed', [
+            '--class' => CategorySeeder::class,
+            '--force' => true,
+        ]);
 
-        foreach ($categories as $title) {
-            Category::firstOrCreate([
-                'slug' => Str::slug($title),
-                'name' => $title,
-            ]);
-        }
+        \Artisan::call('db:seed', [
+            '--class' => StaticWebsiteDatumSeeder::class,
+            '--force' => true,
+        ]);
 
         return response()->json([
             'message' => 'Code seeded successfully with ID: ' . $code->id
@@ -83,7 +80,7 @@ class AdminController extends Controller
             "weight" => "required|numeric|integer|min:0",
             "status" => "required|in:active,inactive",
             "media" => "nullable|array",
-            "media.*" => "image|mimes:jpg,jpeg,png,gif,mp4,webp",
+            "media.*" => "image|mimes:jpg,jpeg,png,gif,webp",
         ]);
     }
 
@@ -179,11 +176,11 @@ class AdminController extends Controller
             $mediaFiles = $request->file('media');
             foreach ($mediaFiles as $file) {
                 $filename = Str::slug($product->title) . '-' . Str::random(5) . '.' . $file->getClientOriginalExtension();
-                $path = $file->storeAs('products', $filename, 'public'); // todo: change to s3 or other storage
+                $path = $file->storeAs('products', $filename);
 
                 ProductGallery::create([
                     'product_id' => $product->id,
-                    'media_url' => $path,
+                    'media_url' => \Storage::url($path),
                     'type' => $file->getClientOriginalExtension(),
                 ]);
             }
@@ -243,11 +240,11 @@ class AdminController extends Controller
             $mediaFiles = $request->file('media');
             foreach ($mediaFiles as $file) {
                 $filename = Str::slug($product->title) . '-' . Str::random(5) . '.' . $file->getClientOriginalExtension();
-                $path = $file->storeAs('products', $filename, 'public'); // todo: change to s3 or other storage
+                $path = $file->storeAs('products', $filename);
 
                 ProductGallery::create([
                     'product_id' => $product->id,
-                    'media_url' => $path,
+                    'media_url' => \Storage::url($path),
                     'type' => $file->getClientOriginalExtension(),
                 ]);
             }
