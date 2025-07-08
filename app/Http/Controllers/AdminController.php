@@ -83,7 +83,7 @@ class AdminController extends Controller
             "weight" => "required|numeric|integer|min:0",
             "status" => "required|in:active,inactive",
             "media" => "nullable|array",
-            "media.*" => "image|mimes:jpg,jpeg,png,gif,mp4,webp",
+            "media.*" => "image|mimes:jpg,jpeg,png,gif,webp",
         ]);
     }
 
@@ -179,11 +179,11 @@ class AdminController extends Controller
             $mediaFiles = $request->file('media');
             foreach ($mediaFiles as $file) {
                 $filename = Str::slug($product->title) . '-' . Str::random(5) . '.' . $file->getClientOriginalExtension();
-                $path = $file->storeAs('products', $filename, 'public'); // todo: change to s3 or other storage
+                $path = $file->storeAs('products', $filename);
 
                 ProductGallery::create([
                     'product_id' => $product->id,
-                    'media_url' => $path,
+                    'media_url' => \Storage::url($path),
                     'type' => $file->getClientOriginalExtension(),
                 ]);
             }
@@ -243,11 +243,11 @@ class AdminController extends Controller
             $mediaFiles = $request->file('media');
             foreach ($mediaFiles as $file) {
                 $filename = Str::slug($product->title) . '-' . Str::random(5) . '.' . $file->getClientOriginalExtension();
-                $path = $file->storeAs('products', $filename, 'public'); // todo: change to s3 or other storage
+                $path = $file->storeAs('products', $filename);
 
                 ProductGallery::create([
                     'product_id' => $product->id,
-                    'media_url' => $path,
+                    'media_url' => \Storage::url($path),
                     'type' => $file->getClientOriginalExtension(),
                 ]);
             }
