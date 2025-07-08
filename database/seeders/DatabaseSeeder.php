@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             CodeSeeder::class,
             CategorySeeder::class,
+            StaticWebsiteDatumSeeder::class,
         ]);
 
 //        $products = Product::factory()->count(500)->create();
