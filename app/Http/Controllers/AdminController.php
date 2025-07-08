@@ -25,13 +25,7 @@ class AdminController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        if (Code::where('access_code', $accessCode)->exists()) {
-            return response()->json([
-                'message' => 'Code already exists.'
-            ]);
-        }
-
-        $code = Code::create([
+        $code = Code::createOrFirst([
             'access_code' => $accessCode ?: '123',
         ]);
 
