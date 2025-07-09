@@ -6,8 +6,9 @@
 
     <title inertia>{{ config('app.name', 'Laravel') }}</title>
 
-    <link rel="icon" href="/assets/logo.webp" type="image/webp">
-    <link rel="apple-touch-icon" href="/assets/logo.webp">
+    <link rel="preload" href="/assets/logo.webp" as="image">
+    <link rel="icon" href="/assets/icon.png" type="image/png">
+    <link rel="apple-touch-icon" href="/assets/icon.png">
 
     @routes
     @viteReactRefresh
