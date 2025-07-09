@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->uuid('id')->primary();
             $table->uuid('product_id');
             $table->string('media_url')->unique();
-            $table->string('type')->default('image');
+            $table->string('type')->nullable();
 
             $table->foreign('product_id')->references('id')->on('products');
 
