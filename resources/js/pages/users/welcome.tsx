@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { Separator } from '@/components/ui/separator';
+import { useWebsiteData } from '@/hooks/use-website-data';
 import MainLayout from '@/layouts/custom/main-layout';
 import { Product, SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
@@ -14,6 +15,7 @@ export default function Welcome() {
             productsByCategory: { category: { slug: string; name: string }; data: Product[] }[];
         }
     >().props;
+    const { carouselData } = useWebsiteData();
 
     if (!productsByCategory) {
         return <div>Loading</div>;
@@ -36,16 +38,12 @@ export default function Welcome() {
                     className="mx-auto mt-3 w-full"
                 >
                     <CarouselContent>
-                        {Array.from({ length: 5 }).map((_, index) => (
+                        {carouselData.map((carousel, index) => (
                             <CarouselItem key={index}>
                                 <div className="p-1">
                                     <Card className="min-h-96">
                                         <CardContent className="flex h-96 items-center justify-center">
-                                            <img
-                                                className="h-full w-full object-cover"
-                                                src={'https://placehold.jp/c7c7c7/ffffff/1200x900.jpg?text=Coming%20Soon'}
-                                                alt={`Placeholder-${index + 1}`}
-                                            />
+                                            <img className="h-full w-full object-cover" src={carousel.image} alt={carousel.alt} />
                                         </CardContent>
                                     </Card>
                                 </div>

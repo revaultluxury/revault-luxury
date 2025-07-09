@@ -7,6 +7,20 @@ export const useWebsiteData = () => {
     const topBanner = {
         text: 'Free International Shipping ⛟',
     };
+    const carouselData = [
+        {
+            image: 'https://fls-9f56b3e7-34dc-42a4-9adf-f70180fad897.laravel.cloud/carousel/carousel-1.jpg',
+            alt: 'Carousel Image 1',
+        },
+        {
+            image: 'https://fls-9f56b3e7-34dc-42a4-9adf-f70180fad897.laravel.cloud/carousel/carousel-2.jpg',
+            alt: 'Carousel Image 2',
+        },
+        {
+            image: 'https://fls-9f56b3e7-34dc-42a4-9adf-f70180fad897.laravel.cloud/carousel/carousel-3.jpg',
+            alt: 'Carousel Image 3',
+        },
+    ];
     const navbarData = {
         logo: {
             url: 'https://revaultluxury.com',
@@ -65,5 +79,5 @@ export const useWebsiteData = () => {
         ],
     };
 
-    return { navbarData, footerData, topBanner };
+    return { navbarData, footerData, topBanner, carouselData };
 };
