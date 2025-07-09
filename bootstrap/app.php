@@ -23,6 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'guest-with-session' => \App\Http\Middleware\GuestSession::class,
             'auth-with-session' => \App\Http\Middleware\AuthSession::class,
+            'locale' => \App\Http\Middleware\LocaleMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
