@@ -193,6 +193,29 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'contact' => 'contact',
+
+        'shipping.first_name' => 'shipping first name',
+        'shipping.last_name' => 'shipping last name',
+        'shipping.address' => 'shipping address',
+        'shipping.detail_address' => 'shipping detail address',
+        'shipping.city' => 'shipping city',
+        'shipping.province' => 'shipping province',
+        'shipping.postal_code' => 'shipping postal code',
+        'shipping.country' => 'shipping country',
+
+        'billing.first_name' => 'billing first name',
+        'billing.last_name' => 'billing last name',
+        'billing.address' => 'billing address',
+        'billing.detail_address' => 'billing detail address',
+        'billing.city' => 'billing city',
+        'billing.province' => 'billing province',
+        'billing.postal_code' => 'billing postal code',
+        'billing.country' => 'billing country',
+
+        'save_shipping' => 'save shipping preference',
+
+    ],
 
 ];
