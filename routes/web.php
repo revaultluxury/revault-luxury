@@ -16,6 +16,8 @@ foreach ($locales as $locale) {
             Route::get('/shipping', [\App\Http\Controllers\WebsiteController::class, 'shipping'])->name('pages.shipping');
             Route::get('/returns', [\App\Http\Controllers\WebsiteController::class, 'returns'])->name('pages.returns');
             Route::get('/cancellations', [\App\Http\Controllers\WebsiteController::class, 'cancellations'])->name('pages.cancellations');
+            Route::get('/terms-and-conditions', [\App\Http\Controllers\WebsiteController::class, 'termsAndConditions'])
+                ->name('pages.terms-and-conditions');
 
             Route::get('/contact-us', [\App\Http\Controllers\WebsiteController::class, 'contactUs'])->name('pages.contact-us');
             Route::get('/about-us', [\App\Http\Controllers\WebsiteController::class, 'aboutUs'])->name('pages.about-us');
@@ -50,6 +52,8 @@ foreach ($locales as $locale) {
                 Route::get('/shipping', [\App\Http\Controllers\WebsiteController::class, 'shipping'])->name("$locale.pages.shipping");
                 Route::get('/returns', [\App\Http\Controllers\WebsiteController::class, 'returns'])->name("$locale.pages.returns");
                 Route::get('/cancellations', [\App\Http\Controllers\WebsiteController::class, 'cancellations'])->name("$locale.pages.cancellations");
+                Route::get('/terms-and-conditions', [\App\Http\Controllers\WebsiteController::class, 'termsAndConditions'])
+                    ->name("$locale.pages.terms-and-conditions");
 
                 Route::get('/contact-us', [\App\Http\Controllers\WebsiteController::class, 'contactUs'])->name("$locale.pages.contact-us");
                 Route::get('/about-us', [\App\Http\Controllers\WebsiteController::class, 'aboutUs'])->name("$locale.pages.about-us");

@@ -75,6 +75,10 @@ export const useWebsiteData = () => {
                         text: t('cancellations', 'Cancellations'),
                         url: route(localizedRouteName(`pages.cancellations`, locale)),
                     },
+                    {
+                        text: t('terms_and_conditions', 'Terms & Conditions'),
+                        url: route(localizedRouteName(`pages.terms-and-conditions`, locale)),
+                    },
                 ],
             },
             {

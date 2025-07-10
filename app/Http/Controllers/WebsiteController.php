@@ -169,4 +169,22 @@ class WebsiteController extends Controller
         ]);
     }
 
+    public function termsAndConditions()
+    {
+        $locales = app()->getLocale();
+
+        $data = StaticWebsiteDatum::where('locale', $locales)
+            ->where('key', 'terms-and-conditions')
+            ->firstOrFail();
+
+        return Inertia::render('users/static/static-page', [
+            'title' => 'Terms and Conditions',
+            'content' => $data->value,
+            'image' => [
+                'src' => 'https://marketplace189.com/cdn/shop/files/man-sitting-in-city.jpg?v=1750609100&width=3840',
+                'alt' => 'Cookie Policy Image'
+            ]
+        ]);
+    }
+
 }

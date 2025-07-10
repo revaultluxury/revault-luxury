@@ -68,4 +68,5 @@ return [
     'pay' => 'Bayar',
     'order_summary' => 'Ringkasan Pesanan',
     'loading' => 'Memuat',
+    'terms_and_conditions' => 'Syarat dan Ketentuan',
 ];

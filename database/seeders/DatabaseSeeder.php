@@ -26,6 +26,8 @@ class DatabaseSeeder extends Seeder
             StaticWebsiteDatumSeeder::class,
         ]);
 
-        $products = \App\Models\Product::factory()->count(100)->create();
+        if (app()->environment('local')) {
+            \App\Models\Product::factory()->count(100)->create();
+        }
     }
 }
