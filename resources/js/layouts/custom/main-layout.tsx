@@ -11,7 +11,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
 
     return (
         <>
-            <div className="w-full bg-black py-1 text-center text-white">{data.topBanner.text}</div>
+            <div className="w-full bg-black py-1 text-center text-white">{data.topBanner}</div>
             <Navbar logo={data.navbarData.logo} menu={data.navbarData.menu} />
             <main>{children}</main>
             <Footer

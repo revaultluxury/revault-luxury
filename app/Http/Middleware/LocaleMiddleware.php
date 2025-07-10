@@ -17,7 +17,7 @@ class LocaleMiddleware
     {
         $locale = $request->segment(1);
 
-        $supportedLocales = ['en', 'id', 'cn'];
+        $supportedLocales = config('app.supported_locales');
         if (in_array($locale, $supportedLocales)) {
             \App::setLocale($locale);
         } else {

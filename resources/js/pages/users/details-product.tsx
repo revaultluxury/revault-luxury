@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Carousel, CarouselApi, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { Label } from '@/components/ui/label';
+import { useTranslations } from '@/hooks/use-translations';
 import MainLayout from '@/layouts/custom/main-layout';
 import { fetchCheckoutRedirectUrl } from '@/lib/utils';
 import { useCartStore } from '@/stores/cart';
@@ -11,9 +12,10 @@ import { router, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 
 export default function DetailsProduct() {
-    const { product } = usePage<SharedData & { product: Product }>().props;
+    const { product, locale } = usePage<SharedData & { product: Product }>().props;
     const [api, setApi] = useState<CarouselApi>();
     const addToCart = useCartStore((state) => state.addToCart);
+    const { t } = useTranslations();
 
     const [current, setCurrent] = useState(0);
     const [count, setCount] = useState(0);
@@ -115,7 +117,7 @@ export default function DetailsProduct() {
                                 </div>
                                 <div className="flex flex-col items-start gap-2 md:min-w-52">
                                     <div className="grid w-full max-w-lg items-center gap-3">
-                                        <Label htmlFor="quantity-input">Quantity</Label>
+                                        <Label htmlFor="quantity-input">{t('quantity', 'Quantity')}</Label>
                                         <QuantityInput
                                             value={quantity}
                                             max={product.stock}
@@ -131,13 +133,14 @@ export default function DetailsProduct() {
                                             disabled={product.stock <= 0}
                                             variant="outline"
                                         >
-                                            Add to Cart
+                                            {t('add_to_cart', 'Add to Cart')}
                                         </Button>
                                         <Button
                                             disabled={isLoading || product.stock <= 0}
                                             onClick={() => {
                                                 setIsLoading(true);
                                                 fetchCheckoutRedirectUrl(
+                                                    locale,
                                                     {
                                                         slug: product.slug,
                                                         qty: 1,
@@ -156,7 +159,7 @@ export default function DetailsProduct() {
                                                 );
                                             }}
                                         >
-                                            Buy It Now
+                                            {t('buy_it_now', 'Buy It Now')}
                                         </Button>
                                     </div>
                                 </div>
@@ -164,8 +167,8 @@ export default function DetailsProduct() {
                         </Card>
                         <Card className="lg:grow">
                             <CardHeader>
-                                <CardTitle>Description</CardTitle>
-                                <CardDescription>Product details and specifications</CardDescription>
+                                <CardTitle>{t('description', 'Description')}</CardTitle>
+                                <CardDescription>{t('product_details_and_specifications', 'Product details and specifications')}</CardDescription>
                             </CardHeader>
                             <CardContent>
                                 <div dangerouslySetInnerHTML={{ __html: product.description }}></div>

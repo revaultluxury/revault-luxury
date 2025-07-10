@@ -14,17 +14,32 @@ class CategorySeeder extends Seeder
     public function run(): void
     {
         $categories = [
-            'Watches',
-            'Luxury Watches',
-            'Luxury Bags',
-            'Luxury Accessories',
+            'Luxury Watches' => [
+                'en' => ['title' => 'Luxury Watches', 'description' => ''],
+                'cn' => ['title' => '奢侈手表', 'description' => ''],
+                'id' => ['title' => 'Jam Tangan Mewah', 'description' => ''],
+            ],
+            'Luxury Bags' => [
+                'en' => ['title' => 'Luxury Bags', 'description' => ''],
+                'cn' => ['title' => '奢侈包包', 'description' => ''],
+                'id' => ['title' => 'Tas Mewah', 'description' => ''],
+            ],
+            'Luxury Accessories' => [
+                'en' => ['title' => 'Luxury Accessories', 'description' => ''],
+                'cn' => ['title' => '奢侈配件', 'description' => ''],
+                'id' => ['title' => 'Aksesori Mewah', 'description' => ''],
+            ],
         ];
 
-        foreach ($categories as $title) {
-            Category::firstOrCreate([
-                'slug' => Str::slug($title),
-                'name' => $title,
+        foreach ($categories as $key => $translations) {
+            $category = Category::firstOrCreate([
+                'slug' => Str::slug($key),
             ]);
+            foreach ($translations as $locale => $translation) {
+                $category->translateOrNew($locale)->name = $translation['title'];
+                $category->translateOrNew($locale)->description = $translation['description'];
+            }
+            $category->save();
         }
     }
 }

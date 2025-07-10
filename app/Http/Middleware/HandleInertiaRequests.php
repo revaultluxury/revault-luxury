@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Lang;
 use Inertia\Middleware;
 use Tighten\Ziggy\Ziggy;
 
@@ -41,16 +42,16 @@ class HandleInertiaRequests extends Middleware
 
         return [
             ...parent::share($request),
-            'name' => config('app.name'),
 //            'quote' => ['message' => trim($message), 'author' => trim($author)],
 //            'auth' => fn() => [
 //                'user' => $request->user(),
 //            ],
+//            'sidebarOpen' => !$request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+            'name' => config('app.name'),
             'ziggy' => fn(): array => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
             ],
-//            'sidebarOpen' => !$request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'locale' => fn() => app()->getLocale(),
             'categories' => fn() => \App\Models\Category::all()->map(function ($category) {
                 return [
@@ -59,6 +60,12 @@ class HandleInertiaRequests extends Middleware
                     'slug' => $category->slug,
                 ];
             })->toArray(),
+            'translations' => function () {
+                $locale = app()->getLocale();
+                $content = Lang::get('content', [], $locale);
+//                dd($content);
+                return \Arr::dot($content); // flattens the nested array
+            },
         ];
     }
 }

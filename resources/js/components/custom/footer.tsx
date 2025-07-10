@@ -12,6 +12,10 @@ interface FooterProps {
     logo?: {
         url: string;
         title: string;
+        img?: {
+            src: string;
+            alt: string;
+        };
     };
     menuItems?: MenuItem[];
     copyright?: string;
@@ -25,6 +29,10 @@ const Footer = ({
     logo = {
         title: 'Shadcnblocks.com',
         url: 'https://www.shadcnblocks.com',
+        img: {
+            src: 'https://www.shadcnblocks.com/logo.png',
+            alt: 'Shadcnblocks Logo',
+        },
     },
     menuItems = [
         {
@@ -79,7 +87,12 @@ const Footer = ({
                     <div className="grid grid-cols-2 gap-8 lg:grid-cols-6">
                         <div className="col-span-2 mb-8 lg:mb-0">
                             <div className="flex items-center gap-2 lg:justify-start">
-                                <p className="text-xl font-semibold">{logo.title}</p>
+                                {/*<p className="text-xl font-semibold">{logo.title}</p>*/}
+                                <Link href={logo?.url} className={'flex items-center gap-2'}>
+                                    <span className="rounded bg-black p-1">
+                                        <img src={logo?.img?.src} className="max-h-8" alt={logo?.img?.alt} />
+                                    </span>
+                                </Link>
                             </div>
                         </div>
                         {menuItems.map((section, sectionIdx) => (

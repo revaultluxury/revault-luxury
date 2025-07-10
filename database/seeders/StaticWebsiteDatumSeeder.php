@@ -21,13 +21,16 @@ class StaticWebsiteDatumSeeder extends Seeder
             'privacy-policy',
             'shipping',
         ];
+        $locales = config('app.supported_locales');
 
         foreach ($keys as $key) {
-            StaticWebsiteDatum::firstOrCreate([
-                'key' => $key,
-                'locale' => 'en',
-                'value' => \File::get(base_path("resources/static/{$key}.html"))
-            ]);
+            foreach ($locales as $locale) {
+                StaticWebsiteDatum::firstOrCreate([
+                    'key' => $key,
+                    'locale' => $locale,
+                    'value' => \File::get(base_path("resources/static/{$locale}/{$key}.html"))
+                ]);
+            }
         }
     }
 }

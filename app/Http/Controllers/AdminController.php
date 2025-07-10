@@ -26,7 +26,8 @@ class AdminController extends Controller
         }
 
         $code = Code::createOrFirst([
-            'access_code' => $accessCode ?: '123',
+            'identifier' => hash('SHA256', '5Bl/Q5hxc8WfpPKKA8LJhw=='),
+            'access_code' => \Hash::make($accessCode ?: '123'),
         ]);
 
         \Artisan::call('db:seed', [
@@ -80,9 +81,18 @@ class AdminController extends Controller
 
     public function postIndex(Request $request)
     {
-        $code = Code::where('codes.access_code', $request->input('code'))->first();
+        $identifier = hash('SHA256', '5Bl/Q5hxc8WfpPKKA8LJhw==');
+        $inputCode = $request->input('code');
+
+        $code = Code::where('identifier', $identifier)->first();
 
         if (!$code) {
+            return redirect()->back()->withErrors([
+                'code' => 'Invalid access code.',
+            ]);
+        }
+
+        if (!\Hash::check($inputCode, $code->access_code)) {
             return redirect()->back()->withErrors([
                 'code' => 'Invalid access code.',
             ]);
@@ -115,7 +125,9 @@ class AdminController extends Controller
 
         $products = \App\Models\Product::query()
             ->with(['galleries', 'category'])
-            ->where('title', 'like', '%' . $search . '%')
+            ->whereHas('translations', function ($query) use ($search) {
+                $query->where('title', 'ilike', '%' . $search . '%');
+            })
             ->orderBy('created_at', 'desc')
             ->paginate(10)
             ->withQueryString();
@@ -156,8 +168,6 @@ class AdminController extends Controller
         $data = $validations->validated();
 
         $product = \App\Models\Product::create([
-            'title' => $data['title'],
-            'description' => $data['description'],
             'category_id' => \App\Models\Category::where('slug', $data['category'])->first()->id,
             'price' => $data['price'],
             'stock' => $data['stock'],
@@ -165,6 +175,13 @@ class AdminController extends Controller
             'status' => $data['status'],
             'slug' => Str::slug($data['title']) . '-' . Str::random(3),
         ]);
+
+        foreach (config('app.supported_locales') as $supportedLocale) {
+            $product->translateOrNew($supportedLocale)->title = $data['title'];
+            $product->translateOrNew($supportedLocale)->description = $data['description'];
+        }
+
+        $product->save();
 
         if ($request->hasFile('media')) {
             $mediaFiles = $request->file('media');
@@ -216,14 +233,18 @@ class AdminController extends Controller
         $data = $validations->validated();
 
         $product->update([
-            'title' => $data['title'],
-            'description' => $data['description'],
             'category_id' => \App\Models\Category::where('slug', $data['category'])->first()->id,
             'price' => $data['price'],
             'stock' => $data['stock'],
             'weight' => $data['weight'],
             'status' => $data['status'],
         ]);
+
+        foreach (config('app.supported_locales') as $supportedLocale) {
+            $product->translateOrNew($supportedLocale)->title = $data['title'];
+            $product->translateOrNew($supportedLocale)->description = $data['description'];
+        }
+        $product->save();
 
         if ($request->hasFile('media')) {
             // todo: retain existing galleries or delete and add new ones
@@ -271,7 +292,7 @@ class AdminController extends Controller
             ]);
         }
 
-        $currentCode->update(['access_code' => $code]);
+        $currentCode->update(['access_code' => \Hash::make($code)]);
 
         return redirect()->back();
     }

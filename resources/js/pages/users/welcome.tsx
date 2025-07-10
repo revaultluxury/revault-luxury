@@ -3,22 +3,25 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { Separator } from '@/components/ui/separator';
+import { useTranslations } from '@/hooks/use-translations';
 import { useWebsiteData } from '@/hooks/use-website-data';
 import MainLayout from '@/layouts/custom/main-layout';
+import { localizedRouteName } from '@/lib/utils';
 import { Product, SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
 import Autoplay from 'embla-carousel-autoplay';
 
 export default function Welcome() {
-    const { productsByCategory } = usePage<
+    const { productsByCategory, locale } = usePage<
         SharedData & {
             productsByCategory: { category: { slug: string; name: string }; data: Product[] }[];
         }
     >().props;
     const { carouselData } = useWebsiteData();
+    const { t } = useTranslations();
 
     if (!productsByCategory) {
-        return <div>Loading</div>;
+        return <div>{t('loading', 'Loading')}</div>;
     }
 
     return (
@@ -68,23 +71,14 @@ export default function Welcome() {
                             </div>
                             <div className="mt-5 flex w-full justify-center">
                                 <Button size="lg" asChild variant="outline" className="px-10 py-6 shadow-lg">
-                                    <Link href={route('products.per-category', product.category.slug)}>See More</Link>
+                                    <Link href={route(localizedRouteName('products.per-category', locale), product.category.slug)}>
+                                        {t('see_more', 'See More')}
+                                    </Link>
                                 </Button>
                             </div>
                         </section>
                     );
                 })}
-                {/*<section className="container mx-auto px-4 py-5">
-                    <h1 className="text-center text-xl font-semibold">Fashion 2 </h1>
-                    <Separator className="my-4" />
-                    <div className="flex flex-row gap-5 overflow-x-auto py-3 lg:gap-8">
-                        <ProductCard />
-                        <ProductCard />
-                        <ProductCard />
-                        <ProductCard />
-                        <ProductCard />
-                    </div>
-                </section>*/}
             </MainLayout>
         </>
     );

@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useTranslations } from '@/hooks/use-translations';
 import { InertiaFormProps } from '@inertiajs/react';
 
 const BILLING_OPTIONS: BillingState[] = ['same', 'different'];
@@ -24,7 +25,7 @@ type DesktopFormProps = {
 
 export const CheckoutDesktopForm = ({ form, billingState, setBillingState, checkoutItems, total, onSubmit }: DesktopFormProps) => {
     const { data, setData, errors } = form;
-
+    const { t } = useTranslations();
     return (
         <form onSubmit={onSubmit} className="hidden lg:block">
             <div className="flex flex-row gap-6 pb-12">
@@ -32,18 +33,20 @@ export const CheckoutDesktopForm = ({ form, billingState, setBillingState, check
                     {/* Contact Card */}
                     <Card>
                         <CardHeader>
-                            <CardTitle className="text-lg font-semibold">Contact</CardTitle>
-                            <CardDescription>Please provide your contact information.</CardDescription>
+                            <CardTitle className="text-lg font-semibold">{t('contact', 'Contact')}</CardTitle>
+                            <CardDescription>
+                                {t('please_provide_your_contact_information', 'Please provide your contact information.')}
+                            </CardDescription>
                         </CardHeader>
                         <CardContent>
                             <Label htmlFor="contact" className="grid w-full items-center gap-3">
-                                Email or Phone Number
+                                {t('email_or_phone_number', 'Email or Phone Number')}
                                 <Input
                                     type="text"
                                     inputMode="email"
                                     id="contact"
                                     className={'font-normal'}
-                                    placeholder="Email or Phone Number"
+                                    placeholder={t('email_or_phone_number', 'Email or Phone Number')}
                                     value={data.contact}
                                     onChange={(e) => setData('contact', e.target.value)}
                                 />
@@ -55,8 +58,10 @@ export const CheckoutDesktopForm = ({ form, billingState, setBillingState, check
                     {/* Delivery Card */}
                     <Card>
                         <CardHeader>
-                            <CardTitle className="text-lg font-semibold">Delivery</CardTitle>
-                            <CardDescription>Please provide your shipping information.</CardDescription>
+                            <CardTitle className="text-lg font-semibold">{t('delivery', 'Delivery')}</CardTitle>
+                            <CardDescription>
+                                {t('please_provide_your_delivery_information', 'Please provide your shipping information.')}
+                            </CardDescription>
                         </CardHeader>
                         <CardContent className="flex flex-col gap-4">
                             <UserDetails form={form} type="shipping" />
@@ -67,7 +72,7 @@ export const CheckoutDesktopForm = ({ form, billingState, setBillingState, check
                                         setData('save_shipping', !!checked);
                                     }}
                                 />
-                                Save this information for next time
+                                {t('save_this_information_for_next_time', 'Save this information for next time')}
                             </Label>
                         </CardContent>
                     </Card>
@@ -75,7 +80,7 @@ export const CheckoutDesktopForm = ({ form, billingState, setBillingState, check
                     {/* Billing Address Card */}
                     <Card>
                         <CardHeader>
-                            <CardTitle className="text-lg font-semibold">Billing Address</CardTitle>
+                            <CardTitle className="text-lg font-semibold">{t('billing_address', 'Billing Address')}</CardTitle>
                         </CardHeader>
                         <CardContent className="flex flex-col gap-4">
                             <Accordion
@@ -94,7 +99,9 @@ export const CheckoutDesktopForm = ({ form, billingState, setBillingState, check
                                         >
                                             <span className="inline-flex items-center gap-2">
                                                 <AccordionDisc checked={billingState === option} />
-                                                {option === 'same' ? 'Same as shipping address' : 'Use a different billing address'}
+                                                {option === 'same'
+                                                    ? t('same_as_delivery_address', 'Same as shipping address')
+                                                    : t('use_different_billing_address', 'Use a different billing address')}
                                             </span>
                                         </a>
                                         {option === 'different' && (
@@ -106,7 +113,7 @@ export const CheckoutDesktopForm = ({ form, billingState, setBillingState, check
                                 ))}
                             </Accordion>
                             <Button size="lg" className="w-full" type="submit">
-                                Pay
+                                {t('pay', 'Pay')}
                             </Button>
                         </CardContent>
                     </Card>
@@ -116,7 +123,7 @@ export const CheckoutDesktopForm = ({ form, billingState, setBillingState, check
                     <Card className="gap-0">
                         <CardHeader className="gap-6">
                             <CardTitle className="inline-flex w-full flex-row items-center justify-between">
-                                <span>Order Summary</span>
+                                <span>{t('order_summary', 'Order Summary')}</span>
                             </CardTitle>
                         </CardHeader>
 
@@ -128,7 +135,7 @@ export const CheckoutDesktopForm = ({ form, billingState, setBillingState, check
                             </div>
                         </CardContent>
                         <CardFooter className="flex flex-row items-center justify-between">
-                            <span className="font-bold">Total:</span>
+                            <span className="font-bold">{t('total', 'Total')}:</span>
                             <span className="text-xl font-black">
                                 {total.toLocaleString('en-US', {
                                     style: 'currency',

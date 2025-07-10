@@ -9,6 +9,40 @@ import AdminLayout from '@/layouts/custom/admin-layout';
 import { Product, SharedData } from '@/types';
 import { router, useForm, usePage } from '@inertiajs/react';
 
+/*const PreviewMedia = ({ media, onChange }: { media: File[]; onChange: (updatedMedia: File[]) => void }) => {
+    const [mediaList, setMediaList] = useState<
+        {
+            image: File;
+            status: 'removed' | 'unchanged' | 'new';
+        }[]
+    >(media.map((file) => ({ image: file, status: 'unchanged' })));
+
+    return (
+        <div className="flex h-96 w-full flex-wrap gap-5 overflow-y-auto rounded border border-dashed p-5 shadow">
+            <div className="relative flex size-32 items-center justify-center rounded border-2 p-0.5">
+                <img src="https://placehold.jp/c7c7c7/000000/640x480.png?text=eHjMf1QD" className="w-full object-contain" alt="" />
+                <button
+                    type="button"
+                    className="absolute top-0 right-0 inline-flex size-6 translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-red-500 text-white"
+                >
+                    <X className="size-4" />
+                </button>
+            </div>
+            <div className="size-32 bg-blue-300"></div>
+            <div className="size-32 bg-blue-300"></div>
+            <div className="size-32 bg-blue-300"></div>
+            <div className="size-32 bg-blue-300"></div>
+            <div className="size-32 bg-blue-300"></div>
+            <div className="size-32 bg-blue-300"></div>
+            <div className="size-32 bg-blue-300"></div>
+            <div className="size-32 bg-blue-300"></div>
+            <div className="size-32 bg-blue-300"></div>
+            <div className="size-32 bg-blue-300"></div>
+            <div className="size-32 bg-blue-300"></div>
+        </div>
+    );
+};*/
+
 export default function EditProducts() {
     const { categories, product } = usePage<
         SharedData & {
@@ -73,7 +107,8 @@ export default function EditProducts() {
                                         <Input type="file" multiple onChange={(e) => setData('media', Array.from(e.target.files ?? []))} />
                                     </Label>
                                     {errors.media && <p className="text-sm text-red-500">{errors.media}</p>}
-                                    <div className="h-96 w-full rounded border border-dashed shadow"></div>
+                                    {/*<PreviewMedia media={data.media} />*/}
+                                    <div className="flex h-96 w-full flex-wrap gap-5 overflow-y-auto rounded border border-dashed p-5 shadow"></div>
                                 </div>
 
                                 <Label className="grid w-full max-w-xs items-center gap-3">

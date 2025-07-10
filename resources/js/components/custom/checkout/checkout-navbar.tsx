@@ -1,9 +1,13 @@
+import LocaleDropdown from '@/components/custom/locale-dropdown';
 import { Button } from '@/components/ui/button';
 import { useWebsiteData } from '@/hooks/use-website-data';
-import { Link } from '@inertiajs/react';
+import { localizedRouteName } from '@/lib/utils';
+import { SharedData } from '@/types';
+import { Link, usePage } from '@inertiajs/react';
 import { X } from 'lucide-react';
 
 export const CheckoutNavbar = () => {
+    const { locale } = usePage<SharedData>().props;
     const {
         navbarData: { logo },
     } = useWebsiteData();
@@ -15,10 +19,15 @@ export const CheckoutNavbar = () => {
                 <nav className="hidden h-10 justify-between lg:flex">
                     <div className="flex items-center gap-6">
                         <Link href={logo.url} className="flex items-center gap-2">
-                            <span className="text-lg font-semibold tracking-tighter">{logo.title}</span>
+                            {/*<span className="text-lg font-semibold tracking-tighter">{logo.title}</span>*/}
+                            <span className="rounded bg-black p-1">
+                                <img loading={'eager'} src={logo?.img?.src} className="max-h-8" alt={logo?.img?.alt} />
+                            </span>
                         </Link>
                     </div>
-                    <div className="flex items-center gap-2">{/*<LocaleDropdown />*/}</div>
+                    <div className="flex items-center gap-2">
+                        <LocaleDropdown />
+                    </div>
                 </nav>
 
                 {/* Mobile Menu */}
@@ -28,12 +37,12 @@ export const CheckoutNavbar = () => {
                             <span className="text-lg font-semibold tracking-tighter">{logo.title}</span>
                         </Link>
                         <div className="flex flex-row gap-2">
+                            <LocaleDropdown />
                             <Button variant="ghost" size="icon" className="relative size-8" asChild>
-                                <Link href={route('index')}>
+                                <Link href={route(localizedRouteName('index', locale))}>
                                     <X />
                                 </Link>
                             </Button>
-                            {/*<LocaleDropdown />*/}
                         </div>
                     </div>
                 </div>

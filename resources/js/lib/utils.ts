@@ -9,6 +9,7 @@ export function cn(...inputs: ClassValue[]) {
 type FetchCheckoutData = { slug: string; qty: number };
 
 export function fetchCheckoutRedirectUrl(
+    locale: string,
     data: FetchCheckoutData[] | FetchCheckoutData,
     {
         onSuccess,
@@ -27,11 +28,11 @@ export function fetchCheckoutRedirectUrl(
         };
     };
     axios
-        .post<Response>(route('products.checkout.create'), {
+        .post<Response>(route(localizedRouteName('products.checkout.create', locale)), {
             items: Array.isArray(data) ? data : [data],
         })
         .then((response) => {
-            onSuccess(route('products.checkout', response.data.checkout.path), response.data.checkout.expired_at);
+            onSuccess(route(localizedRouteName('products.checkout', locale), response.data.checkout.path), response.data.checkout.expired_at);
         })
         .catch((error) => {
             onError?.(error);
@@ -40,3 +41,7 @@ export function fetchCheckoutRedirectUrl(
             onFinally?.();
         });
 }
+
+export const localizedRouteName = (name: string, locale: string) => {
+    return locale === 'en' ? name : `${locale}.${name}`;
+};
