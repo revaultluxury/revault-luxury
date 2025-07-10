@@ -2,28 +2,40 @@
 
 namespace App\Models;
 
+use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
+use Astrotomic\Translatable\Translatable;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 
-class DetailTransaction extends Model
+class DetailTransaction extends Model implements TranslatableContract
 {
+    use Translatable, HasUuids;
+
     protected $table = 'details_transaction';
-    protected $primaryKey = ['product_id', 'transaction_id'];
+    protected $keyType = 'string';
     public $incrementing = false;
 
     protected $fillable = [
+        'id',
         'product_id',
         'transaction_id',
         'snapshot_image',
-        'snapshot_title',
-        'snapshot_description',
-        'snapshot_category',
         'snapshot_price',
         'snapshot_weight',
         'quantity',
         'subtotal',
     ];
+
+    public $translatedAttributes = [
+        'snapshot_title',
+        'snapshot_description',
+        'snapshot_category',
+    ];
+
+    public $translationModel = DetailTransactionTranslation::class;
+    public $translationForeignKey = 'details_transaction_id';
 
     public function product(): BelongsTo
     {
