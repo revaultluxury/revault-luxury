@@ -68,4 +68,5 @@ return [
     'pay' => '支付',
     'order_summary' => '订单摘要',
     'loading' => '加载中',
+    'terms_and_conditions' => '条款和条件',
 ];

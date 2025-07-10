@@ -20,6 +20,7 @@ class StaticWebsiteDatumSeeder extends Seeder
             'payments',
             'privacy-policy',
             'shipping',
+            'terms-and-conditions',
         ];
         $locales = config('app.supported_locales');
 
