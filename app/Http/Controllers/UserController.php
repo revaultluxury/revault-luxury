@@ -465,7 +465,7 @@ class UserController extends Controller
             DetailTransaction::insert($detailTransactions);
             DetailTransactionTranslation::insert($translationRows);
 
-            $currency = 16000; // todo
+            $currency = 1; // todo
 
             $paymentGatewayPayload = [
                 'product' => collect($translationRows)
