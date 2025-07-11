@@ -24,4 +24,9 @@ class ProductGallery extends Model
     {
         return $this->belongsTo(Product::class);
     }
+
+    public function getMediaUrlAttribute($value): string
+    {
+        return \Storage::url($value);
+    }
 }

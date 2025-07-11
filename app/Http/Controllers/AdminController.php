@@ -191,7 +191,7 @@ class AdminController extends Controller
 
                 ProductGallery::create([
                     'product_id' => $product->id,
-                    'media_url' => \Storage::url($path),
+                    'media_url' => $path,
                     'type' => $file->getClientOriginalExtension(),
                 ]);
             }
@@ -259,7 +259,7 @@ class AdminController extends Controller
 
                 ProductGallery::create([
                     'product_id' => $product->id,
-                    'media_url' => \Storage::url($path),
+                    'media_url' => $path,
                     'type' => $file->getClientOriginalExtension(),
                 ]);
             }
