@@ -30,6 +30,7 @@ export const useWebsiteData = () => {
     ];
 
     const topBanner = t('free_international_shipping', 'Free International Shipping ⛟');
+
     const navbarData = {
         logo: {
             url: route(localizedRouteName('index', locale)),

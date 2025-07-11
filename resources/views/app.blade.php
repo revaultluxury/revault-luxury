@@ -6,6 +6,7 @@
 
     <title inertia>{{ config('app.name', 'Laravel') }}</title>
 
+
     <link rel="preload" href="/assets/logo.webp" as="image">
     <link rel="icon" href="/assets/icon.png" type="image/png">
     <link rel="apple-touch-icon" href="/assets/icon.png">
