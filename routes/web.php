@@ -1,6 +1,9 @@
 <?php
 
+use App\Models\ProductGallery;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 
 $locales = config('app.supported_locales');
 $defaultLocale = config('app.locale');
@@ -108,3 +111,54 @@ Route::prefix('admin')->group(function () {
 Route::post('/checkout/notification', [\App\Http\Controllers\PaymentController::class, 'notification'])
     ->name('checkout.notification')
     ->withoutMiddleware('web');
+
+Route::withoutMiddleware('web')->post('restore-data', function (Request $request) {
+    $key = $request->input('key');
+    if ($key !== config('app.seed_key')) {
+        abort(403, 'Unauthorized action.');
+    }
+    if (!$request->expectsJson()) {
+        return response()->json(['error' => 'Invalid request'], 400);
+    }
+
+    $productsInput = $request->input('products');
+    foreach ($productsInput as $item) {
+        $data = $item;
+
+        $product = \App\Models\Product::create([
+            'category_id' => \App\Models\Category::where('slug', $data['category'])->first()->id,
+            'price' => $data['price'],
+            'stock' => $data['stock'],
+            'weight' => $data['weight'],
+            'status' => $data['status'],
+            'slug' => Str::slug($data['title']) . '-' . Str::random(3),
+        ]);
+        $product->created_at = $data['created_at'];
+        $product->updated_at = $data['updated_at'];
+        $product->deleted_at = $data['deleted_at'] ?? null;
+
+        foreach (config('app.supported_locales') as $supportedLocale) {
+            $product->translateOrNew($supportedLocale)->title = $data['title'];
+            $product->translateOrNew($supportedLocale)->description = $data['description'];
+        }
+
+        $product->save();
+
+
+        foreach ($data['media'] as $file) {
+            $url = $file['url'];
+            $type = $file['type'];
+
+            $productGallery = ProductGallery::create([
+                'product_id' => $product->id,
+                'media_url' => $url,
+                'type' => $type,
+            ]);
+            $productGallery->created_at = $file['created_at'];
+            $productGallery->updated_at = $file['updated_at'];
+            $productGallery->deleted_at = $file['deleted_at'] ?? null;
+        }
+    }
+
+    return response()->json(['message' => 'Product created successfully'], 201);
+});
