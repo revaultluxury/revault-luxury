@@ -1,9 +1,6 @@
 <?php
 
-use App\Models\ProductGallery;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Str;
 
 $locales = config('app.supported_locales');
 $defaultLocale = config('app.locale');
@@ -112,7 +109,7 @@ Route::post('/checkout/notification', [\App\Http\Controllers\PaymentController::
     ->name('checkout.notification')
     ->withoutMiddleware('web');
 
-Route::withoutMiddleware('web')->post('restore-data', function (Request $request) {
+/*Route::withoutMiddleware('web')->post('restore-data', function (Request $request) {
     $key = $request->input('key');
     if ($key !== config('app.seed_key')) {
         abort(403, 'Unauthorized action.');
@@ -161,4 +158,4 @@ Route::withoutMiddleware('web')->post('restore-data', function (Request $request
     }
 
     return response()->json(['message' => 'Product created successfully'], 201);
-});
+});*/
