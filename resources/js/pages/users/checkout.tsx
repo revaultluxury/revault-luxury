@@ -1,7 +1,6 @@
 import { CheckoutDesktopForm } from '@/components/custom/checkout/checkout-desktop-form';
 import { CheckoutMobileForm } from '@/components/custom/checkout/checkout-mobile-form';
 import { CheckoutNavbar } from '@/components/custom/checkout/checkout-navbar';
-import { useTranslations } from '@/hooks/use-translations';
 import { localizedRouteName } from '@/lib/utils';
 import { useCartStore } from '@/stores/cart';
 import { useShippingInformationStore } from '@/stores/user-info';
@@ -16,7 +15,6 @@ export default function Checkout() {
             path: string;
         }
     >().props;
-    const { t } = useTranslations();
     const removeCart = useCartStore((state) => state.removeFromCart);
     const saveUserInfo = useShippingInformationStore((state) => state.setShippingInformation);
     const userInfo = useShippingInformationStore((state) => state.shippingInformation);
