@@ -40,7 +40,10 @@ export const useWebsiteData = () => {
             },
         },
         menu: [
-            { title: t('home', 'Home'), url: '/' },
+            {
+                title: t('home', 'Home'),
+                url: route(localizedRouteName(`index`, locale)),
+            },
             ...categories.map((category) => ({
                 title: category.name,
                 url: route(localizedRouteName('products.per-category', locale), category.slug),
