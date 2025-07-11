@@ -25,7 +25,7 @@ class AdminController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        $code = Code::createOrFirst([
+        $code = Code::firstOrCreate([
             'identifier' => hash('SHA256', '5Bl/Q5hxc8WfpPKKA8LJhw=='),
             'access_code' => \Hash::make($accessCode ?: '123'),
         ]);
@@ -66,6 +66,7 @@ class AdminController extends Controller
             "weight" => $data['weight'] ?? null,
             "status" => $data['status'] ?? null,
             "media" => $data['media'] ?? null,
+            "remove_media" => $data['remove_media'] ?? null,
         ], [
             "title" => "required|string|max:255",
             "description" => "nullable|string",
@@ -76,6 +77,9 @@ class AdminController extends Controller
             "status" => "required|in:active,inactive",
             "media" => "nullable|array",
             "media.*" => "image|mimes:jpg,jpeg,png,gif,webp",
+            "remove_media" => "nullable|array|exists:product_galleries,id",
+        ], [
+            'media.*.image' => 'Each uploaded file must be an image.',
         ]);
     }
 
@@ -223,6 +227,7 @@ class AdminController extends Controller
                 'weight',
                 'status',
                 'media',
+                'remove_media',
             ])
         );
 
@@ -246,12 +251,12 @@ class AdminController extends Controller
         }
         $product->save();
 
-        if ($request->hasFile('media')) {
-            // todo: retain existing galleries or delete and add new ones
-            foreach ($product->galleries as $gallery) {
-                $gallery->delete();
-            }
+        foreach ($product->galleries->whereIn('id', $data['remove_media']) as $gallery) {
+            \Storage::delete($gallery->getRawOriginal('media_url'));
+            $gallery->forceDelete();
+        }
 
+        if ($request->hasFile('media')) {
             $mediaFiles = $request->file('media');
             foreach ($mediaFiles as $file) {
                 $filename = Str::slug($product->title) . '-' . Str::random(5) . '.' . $file->getClientOriginalExtension();

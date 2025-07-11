@@ -11,7 +11,7 @@ const LocaleDropdown = () => {
     const handleChange = (value: string) => {
         const currentRouteName = route().current();
         const currentParams = route().params;
-        
+
         const parts = currentRouteName?.split('.') ?? [];
         const isPrefixed = supportedLocales.includes(parts[0]);
 

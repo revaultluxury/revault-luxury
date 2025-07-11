@@ -26,15 +26,15 @@ export default function Combobox({
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
                 <Button variant="outline" role="combobox" aria-expanded={open} className="w-[200px] justify-between">
-                    {value ? list.find((framework) => framework.value === value)?.label : 'Select framework...'}
+                    {value ? list.find((framework) => framework.value === value)?.label : 'Select category...'}
                     <ChevronsUpDown className="opacity-50" />
                 </Button>
             </PopoverTrigger>
             <PopoverContent className="w-[200px] p-0">
                 <Command>
-                    <CommandInput placeholder="Search framework..." className="h-9" />
+                    <CommandInput placeholder="Search category..." className="h-9" />
                     <CommandList>
-                        <CommandEmpty>No framework found.</CommandEmpty>
+                        <CommandEmpty>No category found.</CommandEmpty>
                         <CommandGroup>
                             {list.map((framework) => (
                                 <CommandItem

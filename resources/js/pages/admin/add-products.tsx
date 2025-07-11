@@ -1,4 +1,5 @@
 import Combobox from '@/components/custom/combobox';
+import PreviewMedia from '@/components/custom/preview-media';
 import RichTextEditor from '@/components/custom/rich-text-editor';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -63,12 +64,21 @@ export default function AddProducts() {
                                     {errors.description && <p className="text-sm text-red-500">{errors.description}</p>}
                                 </div>
                                 <div className="grid w-full items-center gap-3">
-                                    <Label className="grid w-full max-w-lg items-center gap-3">
-                                        Media
-                                        <Input type="file" multiple onChange={(e) => setData('media', Array.from(e.target.files ?? []))} />
-                                    </Label>
-                                    {errors.media && <p className="text-sm text-red-500">{errors.media}</p>}
-                                    <div className="h-96 w-full rounded border border-dashed shadow"></div>
+                                    {/*<Label className="grid w-full max-w-lg items-center gap-3">*/}
+                                    {/*    Media*/}
+                                    {/*    <Input type="file" multiple onChange={(e) => setData('media', Array.from(e.target.files ?? []))} />*/}
+                                    {/*</Label>*/}
+                                    {/*{errors.media && <p className="text-sm text-red-500">{errors.media}</p>}*/}
+                                    {/*<div className="h-96 w-full rounded border border-dashed shadow"></div>*/}
+                                    <PreviewMedia
+                                        onChange={(newMedia) => {
+                                            setData('media', newMedia);
+                                        }}
+                                        error={Object.keys(errors)
+                                            .filter((key) => key.startsWith('media.'))
+                                            .map((key) => (errors as Record<string, string>)[key])
+                                            .join(', ')}
+                                    />
                                 </div>
 
                                 <Label className="grid w-full max-w-xs items-center gap-3">
