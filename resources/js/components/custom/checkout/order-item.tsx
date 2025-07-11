@@ -1,4 +1,5 @@
 import { useTranslations } from '@/hooks/use-translations';
+import { currencyFormatter } from '@/lib/global';
 import { CheckoutItem } from '@/types';
 
 export const OrderItem = ({ product, quantity }: { product: CheckoutItem; quantity: number }) => {
@@ -15,12 +16,7 @@ export const OrderItem = ({ product, quantity }: { product: CheckoutItem; quanti
                 </span>
             </div>
             <div className="flex items-center justify-end">
-                <span className="text-lg font-semibold">
-                    {(parseFloat(product.price) * quantity).toLocaleString('en-US', {
-                        style: 'currency',
-                        currency: 'USD',
-                    })}
-                </span>
+                <span className="text-lg font-semibold">{currencyFormatter.format(parseFloat(product.price) * quantity)}</span>
             </div>
         </div>
     );

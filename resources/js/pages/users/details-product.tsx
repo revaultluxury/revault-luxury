@@ -5,6 +5,7 @@ import { Carousel, CarouselApi, CarouselContent, CarouselItem, CarouselNext, Car
 import { Label } from '@/components/ui/label';
 import { useTranslations } from '@/hooks/use-translations';
 import MainLayout from '@/layouts/custom/main-layout';
+import { currencyFormatter } from '@/lib/global';
 import { fetchCheckoutRedirectUrl } from '@/lib/utils';
 import { useCartStore } from '@/stores/cart';
 import { Product, SharedData } from '@/types';
@@ -105,13 +106,7 @@ export default function DetailsProduct() {
                                     <CardTitle className="max-w-full text-3xl">{product.title}</CardTitle>
                                     <CardDescription className="text-black">
                                         <div className="flex flex-col">
-                                            <h2 className="text-xl">
-                                                {parseFloat(product.price).toLocaleString('en-US', {
-                                                    style: 'currency',
-                                                    currency: 'USD',
-                                                })}{' '}
-                                                USD
-                                            </h2>
+                                            <h2 className="text-xl">{currencyFormatter.format(parseFloat(product.price))} </h2>
                                         </div>
                                     </CardDescription>
                                 </div>

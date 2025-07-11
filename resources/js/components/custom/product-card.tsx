@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { useTranslations } from '@/hooks/use-translations';
+import { currencyFormatter } from '@/lib/global';
 import { fetchCheckoutRedirectUrl, localizedRouteName } from '@/lib/utils';
 import { useCartStore } from '@/stores/cart';
 import { Product, SharedData } from '@/types';
@@ -65,17 +66,9 @@ const ProductCard = forwardRef<HTMLDivElement, ProductCardProps>(({ product, dis
                             <div className="flex flex-col gap-1">
                                 {/*todo: if sale remove hidden*/}
                                 <span className="hidden text-sm text-gray-400 line-through">
-                                    {parseFloat(product.price).toLocaleString('en-US', {
-                                        currency: 'USD',
-                                        style: 'currency',
-                                    })}
+                                    {currencyFormatter.format(parseFloat(product.price))}
                                 </span>
-                                <span className="text-xl font-semibold text-gray-900">
-                                    {parseFloat(product.price).toLocaleString('en-US', {
-                                        currency: 'USD',
-                                        style: 'currency',
-                                    })}
-                                </span>
+                                <span className="text-xl font-semibold text-gray-900">{currencyFormatter.format(parseFloat(product.price))}</span>
                             </div>
                         </div>
                     </div>

@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/navigation-menu';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { useTranslations } from '@/hooks/use-translations';
+import { currencyFormatter } from '@/lib/global';
 import { fetchCheckoutRedirectUrl, localizedRouteName } from '@/lib/utils';
 import { useCartStore } from '@/stores/cart';
 import { Product, SharedData } from '@/types';
@@ -156,11 +157,7 @@ const ShoppingCart = () => {
                                                     <div className="flex flex-col">
                                                         <span className="text-lg font-bold">{item.title}</span>
                                                         <span className="text-sm text-muted-foreground">
-                                                            {parseFloat(item.price).toLocaleString('en-US', {
-                                                                currency: 'USD',
-                                                                style: 'currency',
-                                                            })}{' '}
-                                                            &bull; {item.stock}{' '}
+                                                            {currencyFormatter.format(parseFloat(item.price))} &bull; {item.stock}{' '}
                                                             {item.stock > 1 ? t('items', 'items').toLowerCase() : t('item', 'item').toLowerCase()}{' '}
                                                             {t('left', 'left').toLowerCase()}
                                                         </span>
@@ -177,12 +174,7 @@ const ShoppingCart = () => {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <span>
-                                                    {(parseFloat(item.price) * item.qty).toLocaleString('en-US', {
-                                                        currency: 'USD',
-                                                        style: 'currency',
-                                                    })}
-                                                </span>
+                                                <span>{currencyFormatter.format(parseFloat(item.price) * item.qty)}</span>
                                             </li>
                                         ))}
                                     </ul>
@@ -193,12 +185,7 @@ const ShoppingCart = () => {
                             <div className="flex items-center justify-between border-t py-2">
                                 <span className="text-lg font-semibold">{t('total', 'Total')}</span>
                                 <span className="text-lg font-semibold">
-                                    {cart
-                                        .reduce((total, item) => total + parseFloat(item.price) * item.qty, 0)
-                                        .toLocaleString('en-US', {
-                                            currency: 'USD',
-                                            style: 'currency',
-                                        })}
+                                    {currencyFormatter.format(cart.reduce((total, item) => total + parseFloat(item.price) * item.qty, 0))}
                                 </span>
                             </div>
                             <Button

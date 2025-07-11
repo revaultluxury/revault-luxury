@@ -10,6 +10,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useTranslations } from '@/hooks/use-translations';
+import { currencyFormatter } from '@/lib/global';
 import { InertiaFormProps } from '@inertiajs/react';
 import { ChevronDownIcon } from 'lucide-react';
 
@@ -49,12 +50,7 @@ export const CheckoutMobileForm = ({
                     <CardHeader className="gap-6">
                         <CardTitle className="inline-flex w-full flex-row items-center justify-between">
                             <span>{t('order_summary', 'Order Summary')}</span>
-                            <span className="text-lg font-bold">
-                                {total.toLocaleString('en-US', {
-                                    style: 'currency',
-                                    currency: 'USD',
-                                })}
-                            </span>
+                            <span className="text-lg font-bold">{currencyFormatter.format(total)}</span>
                         </CardTitle>
                         <CardDescription className="flex flex-row items-center justify-center gap-2">
                             <span className="pointer-events-none">{t('order_summary', 'Order Summary')}</span>
@@ -167,12 +163,7 @@ export const CheckoutMobileForm = ({
                 <CardContent className="space-y-4">
                     <div className="inline-flex w-full items-center justify-between">
                         <span className="font-bold">{t('total', 'Total')}:</span>
-                        <span className="text-xl font-black">
-                            {total.toLocaleString('en-US', {
-                                style: 'currency',
-                                currency: 'USD',
-                            })}
-                        </span>
+                        <span className="text-xl font-black">{currencyFormatter.format(total)}</span>
                     </div>
                     <Button size="lg" className="w-full" type="submit">
                         {t('pay', 'Pay')}

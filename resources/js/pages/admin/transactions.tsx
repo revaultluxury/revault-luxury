@@ -14,6 +14,7 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useDebouncedValue } from '@/hooks/use-debounced';
 import AdminLayout from '@/layouts/custom/admin-layout';
+import { currencyFormatter, dateFormatter } from '@/lib/global';
 import { PaginatedResponse, SharedData, Transaction } from '@/types';
 import { router, usePage } from '@inertiajs/react';
 import { Fragment, useEffect, useRef, useState } from 'react';
@@ -78,10 +79,7 @@ export default function AdminTransactions() {
                                                 <div className="text-xs text-muted-foreground">{tx.customer_contact}</div>
                                             </TableCell>
                                             <TableCell>
-                                                {parseFloat(tx.total_amount).toLocaleString('en-US', {
-                                                    style: 'currency',
-                                                    currency: 'USD',
-                                                })}{' '}
+                                                {currencyFormatter.format(parseFloat(tx.total_amount))}{' '}
                                                 <span className="text-xs text-muted-foreground">({tx.total_weight}g)</span>
                                             </TableCell>
                                             <TableCell>
@@ -96,12 +94,7 @@ export default function AdminTransactions() {
                                                     {tx.status.toUpperCase()}
                                                 </Badge>
                                             </TableCell>
-                                            <TableCell>
-                                                {new Date(tx.transaction_date).toLocaleString('en-UK', {
-                                                    dateStyle: 'short',
-                                                    timeStyle: 'short',
-                                                })}
-                                            </TableCell>
+                                            <TableCell>{dateFormatter.format(new Date(tx.transaction_date))}</TableCell>
                                             <TableCell>
                                                 <Button
                                                     size="sm"
@@ -140,20 +133,10 @@ export default function AdminTransactions() {
                                                                     </TableCell>
                                                                     <TableCell>{dt.snapshot_title}</TableCell>
                                                                     <TableCell>{dt.snapshot_category}</TableCell>
-                                                                    <TableCell>
-                                                                        {parseFloat(dt.snapshot_price).toLocaleString('en-US', {
-                                                                            style: 'currency',
-                                                                            currency: 'USD',
-                                                                        })}
-                                                                    </TableCell>
+                                                                    <TableCell>{currencyFormatter.format(parseFloat(dt.snapshot_price))}</TableCell>
                                                                     <TableCell>{dt.quantity}</TableCell>
                                                                     <TableCell>{dt.snapshot_weight}g</TableCell>
-                                                                    <TableCell>
-                                                                        {parseFloat(dt.subtotal).toLocaleString('en-US', {
-                                                                            style: 'currency',
-                                                                            currency: 'USD',
-                                                                        })}
-                                                                    </TableCell>
+                                                                    <TableCell>{currencyFormatter.format(parseFloat(dt.subtotal))}</TableCell>
                                                                 </TableRow>
                                                             ))}
                                                         </TableBody>

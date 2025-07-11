@@ -14,6 +14,7 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useDebouncedValue } from '@/hooks/use-debounced';
 import AdminLayout from '@/layouts/custom/admin-layout';
+import { currencyFormatter, dateFormatter } from '@/lib/global';
 import { PaginatedResponse, Product, SharedData } from '@/types';
 import { Link, router, usePage } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
@@ -71,12 +72,7 @@ export default function ShowProducts() {
                                     <TableRow key={product.id}>
                                         <TableCell>{product.title}</TableCell>
                                         <TableCell>{product.category.name}</TableCell>
-                                        <TableCell>
-                                            {parseFloat(product.price).toLocaleString('en-US', {
-                                                style: 'currency',
-                                                currency: 'USD',
-                                            })}
-                                        </TableCell>
+                                        <TableCell>{currencyFormatter.format(parseFloat(product.price))}</TableCell>
                                         <TableCell>{product.stock}</TableCell>
                                         <TableCell>{product.weight}</TableCell>
                                         <TableCell>
@@ -90,18 +86,8 @@ export default function ShowProducts() {
                                                 </Badge>
                                             )}
                                         </TableCell>
-                                        <TableCell>
-                                            {new Date(product.created_at).toLocaleString('en-UK', {
-                                                timeStyle: 'short',
-                                                dateStyle: 'short',
-                                            })}
-                                        </TableCell>
-                                        <TableCell>
-                                            {new Date(product.updated_at).toLocaleString('en-UK', {
-                                                timeStyle: 'short',
-                                                dateStyle: 'short',
-                                            })}
-                                        </TableCell>
+                                        <TableCell>{dateFormatter.format(new Date(product.created_at))}</TableCell>
+                                        <TableCell>{dateFormatter.format(new Date(product.updated_at))}</TableCell>
                                         <TableCell>
                                             <span className="flex flex-row gap-2">
                                                 <Button size="sm" variant="outline" asChild>

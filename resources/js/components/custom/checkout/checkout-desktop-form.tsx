@@ -10,6 +10,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useTranslations } from '@/hooks/use-translations';
+import { currencyFormatter } from '@/lib/global';
 import { InertiaFormProps } from '@inertiajs/react';
 
 const BILLING_OPTIONS: BillingState[] = ['same', 'different'];
@@ -136,12 +137,7 @@ export const CheckoutDesktopForm = ({ form, billingState, setBillingState, check
                         </CardContent>
                         <CardFooter className="flex flex-row items-center justify-between">
                             <span className="font-bold">{t('total', 'Total')}:</span>
-                            <span className="text-xl font-black">
-                                {total.toLocaleString('en-US', {
-                                    style: 'currency',
-                                    currency: 'USD',
-                                })}
-                            </span>
+                            <span className="text-xl font-black">{currencyFormatter.format(total)}</span>
                         </CardFooter>
                     </Card>
                 </div>
