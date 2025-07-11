@@ -1,6 +1,7 @@
 import { CheckoutDesktopForm } from '@/components/custom/checkout/checkout-desktop-form';
 import { CheckoutMobileForm } from '@/components/custom/checkout/checkout-mobile-form';
 import { CheckoutNavbar } from '@/components/custom/checkout/checkout-navbar';
+import { localizedRouteName } from '@/lib/utils';
 import { useCartStore } from '@/stores/cart';
 import { useShippingInformationStore } from '@/stores/user-info';
 import { AccordionState, BillingState, CheckoutForm, CheckoutItem, SharedData } from '@/types';
@@ -8,7 +9,12 @@ import { useForm, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 
 export default function Checkout() {
-    const { checkoutItems, path } = usePage<SharedData & { checkoutItems: CheckoutItem[]; path: string }>().props;
+    const { checkoutItems, path, locale } = usePage<
+        SharedData & {
+            checkoutItems: CheckoutItem[];
+            path: string;
+        }
+    >().props;
     const removeCart = useCartStore((state) => state.removeFromCart);
     const saveUserInfo = useShippingInformationStore((state) => state.setShippingInformation);
     const userInfo = useShippingInformationStore((state) => state.shippingInformation);
@@ -57,8 +63,7 @@ export default function Checkout() {
         if (form.data.save_shipping) {
             saveUserInfo(form.data.shipping);
         }
-
-        form.post(route('products.checkout.session', path), {
+        form.post(route(localizedRouteName('products.checkout.session', locale), path), {
             onSuccess: () => {},
             onError: (errors) => console.error(errors),
             preserveScroll: true,

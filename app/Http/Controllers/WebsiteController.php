@@ -9,7 +9,7 @@ class WebsiteController extends Controller
 {
     public function faq()
     {
-        $locales = 'en';
+        $locales = app()->getLocale();
 
         $data = StaticWebsiteDatum::where('locale', $locales)
             ->where('key', 'faq')
@@ -27,7 +27,7 @@ class WebsiteController extends Controller
 
     public function payments()
     {
-        $locales = 'en';
+        $locales = app()->getLocale();
 
         $data = StaticWebsiteDatum::where('locale', $locales)
             ->where('key', 'payments')
@@ -45,7 +45,7 @@ class WebsiteController extends Controller
 
     public function shipping()
     {
-        $locales = 'en';
+        $locales = app()->getLocale();
 
         $data = StaticWebsiteDatum::where('locale', $locales)
             ->where('key', 'shipping')
@@ -63,7 +63,7 @@ class WebsiteController extends Controller
 
     public function returns()
     {
-        $locales = 'en';
+        $locales = app()->getLocale();
 
         $data = StaticWebsiteDatum::where('locale', $locales)
             ->where('key', 'shipping')
@@ -81,7 +81,7 @@ class WebsiteController extends Controller
 
     public function cancellations()
     {
-        $locales = 'en';
+        $locales = app()->getLocale();
 
         $data = StaticWebsiteDatum::where('locale', $locales)
             ->where('key', 'shipping')
@@ -99,7 +99,7 @@ class WebsiteController extends Controller
 
     public function contactUs()
     {
-        $locales = 'en';
+        $locales = app()->getLocale();
 
         $data = StaticWebsiteDatum::where('locale', $locales)
             ->where('key', 'contact-us')
@@ -117,7 +117,7 @@ class WebsiteController extends Controller
 
     public function aboutUs()
     {
-        $locales = 'en';
+        $locales = app()->getLocale();
 
         $data = StaticWebsiteDatum::where('locale', $locales)
             ->where('key', 'about-us')
@@ -135,7 +135,7 @@ class WebsiteController extends Controller
 
     public function privacyPolicy()
     {
-        $locales = 'en';
+        $locales = app()->getLocale();
 
         $data = StaticWebsiteDatum::where('locale', $locales)
             ->where('key', 'privacy-policy')
@@ -153,7 +153,7 @@ class WebsiteController extends Controller
 
     public function cookiesPolicy()
     {
-        $locales = 'en';
+        $locales = app()->getLocale();
 
         $data = StaticWebsiteDatum::where('locale', $locales)
             ->where('key', 'cookie-policy')
@@ -161,6 +161,24 @@ class WebsiteController extends Controller
 
         return Inertia::render('users/static/static-page', [
             'title' => 'Cookie Policy',
+            'content' => $data->value,
+            'image' => [
+                'src' => 'https://marketplace189.com/cdn/shop/files/man-sitting-in-city.jpg?v=1750609100&width=3840',
+                'alt' => 'Cookie Policy Image'
+            ]
+        ]);
+    }
+
+    public function termsAndConditions()
+    {
+        $locales = app()->getLocale();
+
+        $data = StaticWebsiteDatum::where('locale', $locales)
+            ->where('key', 'terms-and-conditions')
+            ->firstOrFail();
+
+        return Inertia::render('users/static/static-page', [
+            'title' => 'Terms and Conditions',
             'content' => $data->value,
             'image' => [
                 'src' => 'https://marketplace189.com/cdn/shop/files/man-sitting-in-city.jpg?v=1750609100&width=3840',

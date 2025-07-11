@@ -29,6 +29,8 @@ export interface SharedData {
     ziggy: Config & { location: string };
     sidebarOpen: boolean;
     categories: { id: string; name: string; slug: string }[];
+    locale: string;
+    translations: Record<string, string>;
 
     [key: string]: unknown;
 }

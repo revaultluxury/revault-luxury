@@ -9,6 +9,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useTranslations } from '@/hooks/use-translations';
+import { currencyFormatter } from '@/lib/global';
 import { InertiaFormProps } from '@inertiajs/react';
 import { ChevronDownIcon } from 'lucide-react';
 
@@ -36,6 +38,7 @@ export const CheckoutMobileForm = ({
     onSubmit,
 }: MobileFormProps) => {
     const { data, setData, errors } = form;
+    const { t } = useTranslations();
 
     const toggleOrderAccordion = () => setOrderAccordion(orderAccordion === 'close' ? 'open' : 'close');
 
@@ -46,16 +49,11 @@ export const CheckoutMobileForm = ({
                 <a role="button" onClick={toggleOrderAccordion}>
                     <CardHeader className="gap-6">
                         <CardTitle className="inline-flex w-full flex-row items-center justify-between">
-                            <span>Order Summary</span>
-                            <span className="text-lg font-bold">
-                                {total.toLocaleString('en-US', {
-                                    style: 'currency',
-                                    currency: 'USD',
-                                })}
-                            </span>
+                            <span>{t('order_summary', 'Order Summary')}</span>
+                            <span className="text-lg font-bold">{currencyFormatter.format(total)}</span>
                         </CardTitle>
                         <CardDescription className="flex flex-row items-center justify-center gap-2">
-                            <span className="pointer-events-none">Order Summary</span>
+                            <span className="pointer-events-none">{t('order_summary', 'Order Summary')}</span>
                             <ChevronDownIcon
                                 className={`pointer-events-none size-4 shrink-0 translate-y-0.5 text-muted-foreground transition-transform duration-200 ${
                                     orderAccordion === 'close' ? '-rotate-180' : 'rotate-0'
@@ -82,18 +80,18 @@ export const CheckoutMobileForm = ({
             {/* Contact Card */}
             <Card>
                 <CardHeader>
-                    <CardTitle className="text-lg font-semibold">Contact</CardTitle>
-                    <CardDescription>Please provide your contact information.</CardDescription>
+                    <CardTitle className="text-lg font-semibold">{t('contact', 'Contact')}</CardTitle>
+                    <CardDescription>{t('please_provide_your_contact_information', 'Please provide your contact information.')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <Label htmlFor="contact" className="grid w-full items-center gap-3">
-                        Email or Phone Number
+                        {t('email_or_phone_number', 'Email or Phone Number')}
                         <Input
                             type="text"
                             inputMode="email"
                             id="contact"
                             className={'font-normal'}
-                            placeholder="Email or Phone Number"
+                            placeholder={t('email_or_phone_number', 'Email or Phone Number')}
                             value={data.contact}
                             onChange={(e) => setData('contact', e.target.value)}
                         />
@@ -105,8 +103,8 @@ export const CheckoutMobileForm = ({
             {/* Delivery Card */}
             <Card>
                 <CardHeader>
-                    <CardTitle className="text-lg font-semibold">Delivery</CardTitle>
-                    <CardDescription>Please provide your shipping information.</CardDescription>
+                    <CardTitle className="text-lg font-semibold">{t('delivery', 'Delivery')}</CardTitle>
+                    <CardDescription>{t('please_provide_your_delivery_information', 'Please provide your shipping information.')}</CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-col gap-4">
                     <UserDetails form={form} type="shipping" />
@@ -117,7 +115,7 @@ export const CheckoutMobileForm = ({
                                 setData('save_shipping', !!checked);
                             }}
                         />
-                        Save this information for next time
+                        {t('save_this_information_for_next_time', 'Save this information for next time')}
                     </Label>
                 </CardContent>
             </Card>
@@ -125,7 +123,7 @@ export const CheckoutMobileForm = ({
             {/* Billing Address Card */}
             <Card>
                 <CardHeader>
-                    <CardTitle className="text-lg font-semibold">Billing Address</CardTitle>
+                    <CardTitle className="text-lg font-semibold">{t('billing_address', 'Billing Address')}</CardTitle>
                 </CardHeader>
                 <CardContent className="flex flex-col gap-4">
                     <Accordion
@@ -144,7 +142,9 @@ export const CheckoutMobileForm = ({
                                 >
                                     <span className="inline-flex items-center gap-2">
                                         <AccordionDisc checked={billingState === option} />
-                                        {option === 'same' ? 'Same as shipping address' : 'Use a different billing address'}
+                                        {option === 'same'
+                                            ? t('same_as_delivery_address', 'Same as shipping address')
+                                            : t('use_different_billing_address', 'Use a different billing address')}
                                     </span>
                                 </a>
                                 {option === 'different' && (
@@ -162,16 +162,11 @@ export const CheckoutMobileForm = ({
             <Card>
                 <CardContent className="space-y-4">
                     <div className="inline-flex w-full items-center justify-between">
-                        <span className="font-bold">Total:</span>
-                        <span className="text-xl font-black">
-                            {total.toLocaleString('en-US', {
-                                style: 'currency',
-                                currency: 'USD',
-                            })}
-                        </span>
+                        <span className="font-bold">{t('total', 'Total')}:</span>
+                        <span className="text-xl font-black">{currencyFormatter.format(total)}</span>
                     </div>
                     <Button size="lg" className="w-full" type="submit">
-                        Pay
+                        {t('pay', 'Pay')}
                     </Button>
                 </CardContent>
             </Card>

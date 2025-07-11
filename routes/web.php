@@ -2,37 +2,83 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [\App\Http\Controllers\UserController::class, 'welcome'])->name('index');
+$locales = config('app.supported_locales');
+$defaultLocale = config('app.locale');
 
-Route::prefix('/pages')->group(function () {
-    Route::get('/faq', [\App\Http\Controllers\WebsiteController::class, 'faq'])->name('pages.faq');
-    Route::get('/payments', [\App\Http\Controllers\WebsiteController::class, 'payments'])->name('pages.payments');
-    Route::get('/shipping', [\App\Http\Controllers\WebsiteController::class, 'shipping'])->name('pages.shipping');
-    Route::get('/returns', [\App\Http\Controllers\WebsiteController::class, 'returns'])->name('pages.returns');
-    Route::get('/cancellations', [\App\Http\Controllers\WebsiteController::class, 'cancellations'])->name('pages.cancellations');
+foreach ($locales as $locale) {
+    if ($locale === $defaultLocale) {
+        Route::get('/', [\App\Http\Controllers\UserController::class, 'welcome'])->name('index');
+        Route::post('/cart', [\App\Http\Controllers\UserController::class, 'cart'])->name('products.cart');
 
-    Route::get('/contact-us', [\App\Http\Controllers\WebsiteController::class, 'contactUs'])->name('pages.contact-us');
-    Route::get('/about-us', [\App\Http\Controllers\WebsiteController::class, 'aboutUs'])->name('pages.about-us');
+        Route::prefix('/pages')->group(function () {
+            Route::get('/faq', [\App\Http\Controllers\WebsiteController::class, 'faq'])->name('pages.faq');
+            Route::get('/payments', [\App\Http\Controllers\WebsiteController::class, 'payments'])->name('pages.payments');
+            Route::get('/shipping', [\App\Http\Controllers\WebsiteController::class, 'shipping'])->name('pages.shipping');
+            Route::get('/returns', [\App\Http\Controllers\WebsiteController::class, 'returns'])->name('pages.returns');
+            Route::get('/cancellations', [\App\Http\Controllers\WebsiteController::class, 'cancellations'])->name('pages.cancellations');
+            Route::get('/terms-and-conditions', [\App\Http\Controllers\WebsiteController::class, 'termsAndConditions'])
+                ->name('pages.terms-and-conditions');
 
-    Route::get('/privacy-policy', [\App\Http\Controllers\WebsiteController::class, 'privacyPolicy'])->name('pages.privacy-policy');
-    Route::get('/cookie-policy', [\App\Http\Controllers\WebsiteController::class, 'cookiesPolicy'])->name('pages.cookies-policy');
-});
+            Route::get('/contact-us', [\App\Http\Controllers\WebsiteController::class, 'contactUs'])->name('pages.contact-us');
+            Route::get('/about-us', [\App\Http\Controllers\WebsiteController::class, 'aboutUs'])->name('pages.about-us');
 
-Route::post('/cart', [\App\Http\Controllers\UserController::class, 'cart'])->name('products.cart');
-Route::prefix('/checkout')->group(function () {
-    Route::post('/create', [\App\Http\Controllers\UserController::class, 'checkoutCreate'])
-        ->name('products.checkout.create');
-    Route::get('/session/{path}', [\App\Http\Controllers\UserController::class, 'checkout'])
-        ->name('products.checkout');
-    Route::post('/session/{path}', [\App\Http\Controllers\UserController::class, 'checkoutSession'])
-        ->name('products.checkout.session');
-});
+            Route::get('/privacy-policy', [\App\Http\Controllers\WebsiteController::class, 'privacyPolicy'])->name('pages.privacy-policy');
+            Route::get('/cookie-policy', [\App\Http\Controllers\WebsiteController::class, 'cookiesPolicy'])->name('pages.cookies-policy');
+        });
 
-Route::prefix('products')->group(function () {
-    Route::get('/categories/{category}', [\App\Http\Controllers\UserController::class, 'productPerCategory'])
-        ->name('products.per-category');
-    Route::get('/{slug}', [\App\Http\Controllers\UserController::class, 'detailsProduct'])->name('products.show');
-});
+        Route::prefix('/checkout')->group(function () {
+            Route::post('/create', [\App\Http\Controllers\UserController::class, 'checkoutCreate'])
+                ->name('products.checkout.create');
+            Route::get('/session/{path}', [\App\Http\Controllers\UserController::class, 'checkout'])
+                ->name('products.checkout');
+            Route::post('/session/{path}', [\App\Http\Controllers\UserController::class, 'checkoutSession'])
+                ->name('products.checkout.session');
+        });
+
+        Route::prefix('products')->group(function () {
+            Route::get('/categories/{category}', [\App\Http\Controllers\UserController::class, 'productPerCategory'])
+                ->name('products.per-category');
+            Route::get('/{slug}', [\App\Http\Controllers\UserController::class, 'detailsProduct'])->name('products.show');
+        });
+
+    } else {
+        Route::prefix($locale)->middleware('locale')->group(function () use ($locale) {
+            Route::get('/', [\App\Http\Controllers\UserController::class, 'welcome'])->name("$locale.index");
+            Route::post('/cart', [\App\Http\Controllers\UserController::class, 'cart'])->name("$locale.products.cart");
+
+            Route::prefix('/pages')->group(function () use ($locale) {
+                Route::get('/faq', [\App\Http\Controllers\WebsiteController::class, 'faq'])->name("$locale.pages.faq");
+                Route::get('/payments', [\App\Http\Controllers\WebsiteController::class, 'payments'])->name("$locale.pages.payments");
+                Route::get('/shipping', [\App\Http\Controllers\WebsiteController::class, 'shipping'])->name("$locale.pages.shipping");
+                Route::get('/returns', [\App\Http\Controllers\WebsiteController::class, 'returns'])->name("$locale.pages.returns");
+                Route::get('/cancellations', [\App\Http\Controllers\WebsiteController::class, 'cancellations'])->name("$locale.pages.cancellations");
+                Route::get('/terms-and-conditions', [\App\Http\Controllers\WebsiteController::class, 'termsAndConditions'])
+                    ->name("$locale.pages.terms-and-conditions");
+
+                Route::get('/contact-us', [\App\Http\Controllers\WebsiteController::class, 'contactUs'])->name("$locale.pages.contact-us");
+                Route::get('/about-us', [\App\Http\Controllers\WebsiteController::class, 'aboutUs'])->name("$locale.pages.about-us");
+
+                Route::get('/privacy-policy', [\App\Http\Controllers\WebsiteController::class, 'privacyPolicy'])->name("$locale.pages.privacy-policy");
+                Route::get('/cookie-policy', [\App\Http\Controllers\WebsiteController::class, 'cookiesPolicy'])->name("$locale.pages.cookies-policy");
+            });
+
+            Route::prefix('/checkout')->group(function () use ($locale) {
+                Route::post('/create', [\App\Http\Controllers\UserController::class, 'checkoutCreate'])
+                    ->name("$locale.products.checkout.create");
+                Route::get('/session/{path}', [\App\Http\Controllers\UserController::class, 'checkout'])
+                    ->name("$locale.products.checkout");
+                Route::post('/session/{path}', [\App\Http\Controllers\UserController::class, 'checkoutSession'])
+                    ->name("$locale.products.checkout.session");
+            });
+
+            Route::prefix('products')->group(function () use ($locale) {
+                Route::get('/categories/{category}', [\App\Http\Controllers\UserController::class, 'productPerCategory'])
+                    ->name("$locale.products.per-category");
+                Route::get('/{slug}', [\App\Http\Controllers\UserController::class, 'detailsProduct'])->name("$locale.products.show");
+            });
+        });
+    }
+}
 
 Route::prefix('admin')->group(function () {
     Route::group(['middleware' => ['guest-with-session']], function () {

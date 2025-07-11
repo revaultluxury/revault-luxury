@@ -1,12 +1,19 @@
+import { useTranslations } from '@/hooks/use-translations';
+import { localizedRouteName } from '@/lib/utils';
+import { AvailabilityFilterOptions, SortOptions } from '@/pages/users/products-per-category';
 import { SharedData } from '@/types';
 import { usePage } from '@inertiajs/react';
 
 export const useWebsiteData = () => {
-    const { categories } = usePage<SharedData>().props;
+    const { categories, locale } = usePage<SharedData>().props;
+    const { t } = useTranslations();
 
-    const topBanner = {
-        text: 'Free International Shipping ⛟',
-    };
+    const localeData = [
+        { locale: 'en', name: 'English' },
+        { locale: 'id', name: 'Bahasa Indonesia' },
+        { locale: 'cn', name: '简体中文' },
+    ];
+
     const carouselData = [
         {
             image: 'https://fls-9f56b3e7-34dc-42a4-9adf-f70180fad897.laravel.cloud/carousel/carousel-1.jpg',
@@ -21,54 +28,81 @@ export const useWebsiteData = () => {
             alt: 'Carousel Image 3',
         },
     ];
+
+    const topBanner = t('free_international_shipping', 'Free International Shipping ⛟');
+
     const navbarData = {
         logo: {
-            url: 'https://revaultluxury.com',
+            url: route(localizedRouteName('index', locale)),
             title: 'ReVault',
+            img: {
+                src: '/assets/logo.webp',
+                alt: 'ReVault Logo',
+            },
         },
         menu: [
-            { title: 'Home', url: '/' },
+            {
+                title: t('home', 'Home'),
+                url: route(localizedRouteName(`index`, locale)),
+            },
             ...categories.map((category) => ({
                 title: category.name,
-                url: route('products.per-category', category.slug),
+                url: route(localizedRouteName('products.per-category', locale), category.slug),
             })),
         ],
     };
     const footerData = {
         logo: {
             title: 'ReVault',
-            url: route('index'),
+            url: route(localizedRouteName(`index`, locale)),
+            img: {
+                src: '/assets/logo.webp',
+                alt: 'ReVault Logo',
+            },
         },
         menuItems: [
             {
-                title: 'Menu',
+                title: t('menu', 'Menu'),
                 links: categories.map((category) => ({
                     text: category.name,
-                    url: route('products.per-category', category.slug),
+                    url: route(localizedRouteName(`products.per-category`, locale), category.slug),
                 })),
             },
             {
-                title: 'Information',
+                title: t('information', 'Information'),
                 links: [
-                    { text: 'FAQ', url: route('pages.faq') },
-                    { text: 'Payments', url: route('pages.payments') },
-                    { text: 'Shipping', url: route('pages.shipping') },
-                    { text: 'Returns', url: route('pages.returns') },
-                    { text: 'Cancellations', url: route('pages.cancellations') },
+                    { text: t('faq', 'FAQ'), url: route(localizedRouteName(`pages.faq`, locale)) },
+                    { text: t('payments', 'Payments'), url: route(localizedRouteName(`pages.payments`, locale)) },
+                    { text: t('shipping', 'Shipping'), url: route(localizedRouteName(`pages.shipping`, locale)) },
+                    { text: t('returns', 'Returns'), url: route(localizedRouteName(`pages.returns`, locale)) },
+                    {
+                        text: t('cancellations', 'Cancellations'),
+                        url: route(localizedRouteName(`pages.cancellations`, locale)),
+                    },
+                    {
+                        text: t('terms_and_conditions', 'Terms & Conditions'),
+                        url: route(localizedRouteName(`pages.terms-and-conditions`, locale)),
+                    },
                 ],
             },
             {
-                title: 'Customer Care',
+                title: t('customer_care', 'Customer Care'),
                 links: [
-                    { text: 'Contact Us', url: route('pages.contact-us') },
-                    { text: 'About Us', url: route('pages.about-us') },
+                    { text: t('contact_us', 'Contact Us'), url: route(localizedRouteName(`pages.contact-us`, locale)) },
+                    { text: t('about_us', 'About Us'), url: route(localizedRouteName(`pages.about-us`, locale)) },
                 ],
             },
             {
-                title: 'Policies',
+                title: t('policies', 'Policies'),
                 links: [
-                    { text: 'Privacy Policy', url: route('pages.privacy-policy') },
-                    { text: 'Cookie Policy', url: route('pages.cookies-policy') },
+                    {
+                        text: t('privacy_policy', 'Privacy Policy'),
+                        url: route(localizedRouteName(`pages.privacy-policy`, locale)),
+                    },
+                    {
+                        text: t('cookie_policy', 'Cookie Policy'),
+                        url: route(localizedRouteName(`pages.cookies-policy`, locale)),
+                    },
                 ],
             },
         ],
@@ -78,6 +112,20 @@ export const useWebsiteData = () => {
             // { text: 'Cookie Policy', url: '#' },
         ],
     };
+    const sortOptions: { label: string; value: SortOptions }[] = [
+        { value: 'default', label: t('default', 'Default') },
+        { value: 'best-seller', label: t('best_seller', 'Best Seller') },
+        { value: 'name-asc', label: t('name_asc', 'Name (A-Z)') },
+        { value: 'name-desc', label: t('name_desc', 'Name (Z-A)') },
+        { value: 'price-asc', label: t('price_asc', 'Price (Low to High)') },
+        { value: 'price-desc', label: t('price_desc', 'Price (High to Low)') },
+        { value: 'created-at-asc', label: t('oldest', 'Oldest') },
+        { value: 'created-at-desc', label: t('newest', 'Newest') },
+    ];
+    const availabilityFilterOptions: { label: string; value: AvailabilityFilterOptions }[] = [
+        { value: 'in-stock', label: t('available', 'Available') },
+        { value: 'out-of-stock', label: t('out_of_stock', 'Out of Stock') },
+    ];
 
-    return { navbarData, footerData, topBanner, carouselData };
+    return { navbarData, footerData, topBanner, carouselData, localeData, sortOptions, availabilityFilterOptions };
 };

@@ -1,5 +1,6 @@
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useTranslations } from '@/hooks/use-translations';
 import { BillingForm, CheckoutForm, ShippingForm } from '@/types';
 import { InertiaFormProps } from '@inertiajs/react';
 
@@ -10,6 +11,7 @@ type UserDetailsProps = {
 
 export const UserDetails = ({ form, type }: UserDetailsProps) => {
     const { setData, data, errors } = form;
+    const { t } = useTranslations();
     const userData = data[type];
 
     const getError = (field: string) => {
@@ -24,11 +26,11 @@ export const UserDetails = ({ form, type }: UserDetailsProps) => {
         <>
             <div className="flex w-full flex-col gap-4 md:flex-row">
                 <Label className="grid w-full items-center gap-3">
-                    First Name
+                    {t('first_name', 'First Name')}
                     <div>
                         <Input
                             type="text"
-                            placeholder="First Name"
+                            placeholder={t('first_name', 'First Name')}
                             className="font-normal"
                             value={userData.first_name}
                             onChange={(e) => handleChange('first_name', e.target.value)}
@@ -38,11 +40,11 @@ export const UserDetails = ({ form, type }: UserDetailsProps) => {
                 </Label>
 
                 <Label className="grid w-full items-center gap-3">
-                    Last Name
+                    {t('last_name', 'Last Name')}
                     <div>
                         <Input
                             type="text"
-                            placeholder="Last Name"
+                            placeholder={t('last_name', 'Last Name')}
                             className="font-normal"
                             value={userData.last_name}
                             onChange={(e) => handleChange('last_name', e.target.value)}
@@ -53,11 +55,11 @@ export const UserDetails = ({ form, type }: UserDetailsProps) => {
             </div>
 
             <Label className="grid w-full items-center gap-3">
-                Address
+                {t('address', 'Address')}
                 <div>
                     <Input
                         type="text"
-                        placeholder="Address"
+                        placeholder={t('address', 'Address')}
                         className="font-normal"
                         value={userData.address}
                         onChange={(e) => handleChange('address', e.target.value)}
@@ -67,11 +69,11 @@ export const UserDetails = ({ form, type }: UserDetailsProps) => {
             </Label>
 
             <Label className="grid w-full items-center gap-3">
-                Apartment, suite, etc. (optional)
+                {t('apartment_suite_etc', 'Apartment, suite, etc. (optional)')}
                 <div>
                     <Input
                         type="text"
-                        placeholder="Apartment, suite, etc. (optional)"
+                        placeholder={t('apartment_suite_etc', 'Apartment, suite, etc. (optional)')}
                         className="font-normal"
                         value={userData.detail_address}
                         onChange={(e) => handleChange('detail_address', e.target.value)}
@@ -82,11 +84,11 @@ export const UserDetails = ({ form, type }: UserDetailsProps) => {
 
             <div className="flex w-full flex-col gap-4 md:flex-row">
                 <Label className="grid w-full items-center gap-3">
-                    City
+                    {t('city', 'City')}
                     <div>
                         <Input
                             type="text"
-                            placeholder="City"
+                            placeholder={t('city', 'City')}
                             className="font-normal"
                             value={userData.city}
                             onChange={(e) => handleChange('city', e.target.value)}
@@ -96,11 +98,12 @@ export const UserDetails = ({ form, type }: UserDetailsProps) => {
                 </Label>
 
                 <Label className="grid w-full items-center gap-3">
-                    Province
+                    {t('province', 'Province')}
+
                     <div>
                         <Input
                             type="text"
-                            placeholder="Province"
+                            placeholder={t('province', 'Province')}
                             className="font-normal"
                             value={userData.province}
                             onChange={(e) => handleChange('province', e.target.value)}
@@ -110,11 +113,11 @@ export const UserDetails = ({ form, type }: UserDetailsProps) => {
                 </Label>
 
                 <Label className="grid w-full items-center gap-3">
-                    Postal Code
+                    {t('postal_code', 'Postal Code')}
                     <div>
                         <Input
                             type="text"
-                            placeholder="Postal Code"
+                            placeholder={t('postal_code', 'Postal Code')}
                             className="font-normal"
                             value={userData.postal_code}
                             onChange={(e) => handleChange('postal_code', e.target.value)}
@@ -125,11 +128,11 @@ export const UserDetails = ({ form, type }: UserDetailsProps) => {
             </div>
 
             <Label className="grid w-full items-center gap-3">
-                Country
+                {t('country', 'Country')}
                 <div>
                     <Input
                         type="text"
-                        placeholder="Country"
+                        placeholder={t('country', 'Country')}
                         className="font-normal"
                         value={userData.country}
                         onChange={(e) => handleChange('country', e.target.value)}

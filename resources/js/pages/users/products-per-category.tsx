@@ -13,30 +13,20 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Separator } from '@/components/ui/separator';
+import { useTranslations } from '@/hooks/use-translations';
+import { useWebsiteData } from '@/hooks/use-website-data';
 import MainLayout from '@/layouts/custom/main-layout';
-import { CursorPaginatedResponse, Product, SharedData } from '@/types';
+import { localizedRouteName } from '@/lib/utils';
+import { PaginatedResponse, Product, SharedData } from '@/types';
 import { router, usePage } from '@inertiajs/react';
 import { CheckedState } from '@radix-ui/react-checkbox';
 import axios from 'axios';
 import { ChevronsUpDown, Minus, X } from 'lucide-react';
 import { forwardRef, useEffect, useRef, useState } from 'react';
 
-type SortOptions = 'name-asc' | 'name-desc' | 'price-asc' | 'price-desc' | 'created-at-asc' | 'created-at-desc' | 'default' | 'best-seller';
-const sortOptions: { label: string; value: SortOptions }[] = [
-    { value: 'default', label: 'Default' },
-    { value: 'best-seller', label: 'Best Seller' },
-    { value: 'name-asc', label: 'Name (A-Z)' },
-    { value: 'name-desc', label: 'Name (Z-A)' },
-    { value: 'price-asc', label: 'Price (Low to High)' },
-    { value: 'price-desc', label: 'Price (High to Low)' },
-    { value: 'created-at-asc', label: 'Oldest' },
-    { value: 'created-at-desc', label: 'Newest' },
-];
-type AvailabilityFilterOptions = 'in-stock' | 'out-of-stock';
-const availabilityFilterOptions: { label: string; value: AvailabilityFilterOptions }[] = [
-    { value: 'in-stock', label: 'Available' },
-    { value: 'out-of-stock', label: 'Out of Stock' },
-];
+export type SortOptions = 'name-asc' | 'name-desc' | 'price-asc' | 'price-desc' | 'created-at-asc' | 'created-at-desc' | 'default' | 'best-seller';
+export type AvailabilityFilterOptions = 'in-stock' | 'out-of-stock';
+
 type PriceRange = {
     min: number;
     max: number;
@@ -107,18 +97,21 @@ export default function ProductsPerCategory() {
         products: ssgProducts,
         category,
         parameter,
+        locale,
     } = usePage<
         SharedData & {
-            products: CursorPaginatedResponse<Product>;
+            products: PaginatedResponse<Product>;
             parameter: {
                 availability?: AvailabilityFilterOptions[];
                 price_min?: number;
                 price_max?: number;
                 sort_by?: SortOptions;
             } | null;
-            category: { name: string; slug: string };
+            category: { name: string; slug: string; description: string };
         }
     >().props;
+    const { availabilityFilterOptions, sortOptions } = useWebsiteData();
+    const { t } = useTranslations();
 
     const [availability, setAvailability] = useState<Record<AvailabilityFilterOptions, CheckedState>>(initialAvailability);
     const [sortBy, setSortBy] = useState<SortOptions>(initialSort);
@@ -160,7 +153,7 @@ export default function ProductsPerCategory() {
     }
 
     const fetchNextPage = async (cursor: string) => {
-        const response = await axios.get(cursor, {
+        const response = await axios.get<{ products: PaginatedResponse<Product>; parameters: unknown }>(cursor, {
             params: generateQueryParams(),
             headers: { Accept: 'application/json' },
         });
@@ -191,7 +184,7 @@ export default function ProductsPerCategory() {
                 const queryParams = generateQueryParams();
 
                 router.get(
-                    route('products.per-category', category.slug),
+                    route(localizedRouteName(`products.per-category`, locale), category.slug),
                     { ...queryParams },
                     {
                         preserveState: true,
@@ -275,19 +268,16 @@ export default function ProductsPerCategory() {
                 <section className="container mx-auto px-4 py-5">
                     <div className="space-y-2">
                         <h1 className="text-2xl font-semibold">{category.name}</h1>
-                        <h1 className="text-xl text-gray-500">
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores, consequatur dicta doloremque esse eveniet incidunt
-                            iure libero, mollitia nulla odio tempora veniam. Ad beatae ipsam molestiae mollitia rem sed veniam.
-                        </h1>
+                        <h1 className="text-xl text-gray-500">{category.description}</h1>
                     </div>
                     <Separator className="my-4" />
                     <div className="my-4 flex flex-col justify-between gap-3 md:flex-row">
                         <div className="inline-flex flex-row items-center gap-2">
-                            <span className="text-sm font-semibold">Filter by:</span>
+                            <span className="text-sm font-semibold">{t('filter_by', 'Filter by')}:</span>
                             <DropdownMenu modal={false}>
                                 <DropdownMenuTrigger asChild>
                                     <Button variant="outline" className="inline-flex items-center gap-2">
-                                        Availability
+                                        {t('availability', 'Availability')}
                                         <ChevronsUpDown />
                                     </Button>
                                 </DropdownMenuTrigger>
@@ -312,7 +302,7 @@ export default function ProductsPerCategory() {
                             <Popover>
                                 <PopoverTrigger asChild>
                                     <Button variant="outline" className="inline-flex items-center gap-2">
-                                        Price
+                                        {t('price', 'Price')}
                                         <ChevronsUpDown />
                                     </Button>
                                 </PopoverTrigger>
@@ -321,7 +311,7 @@ export default function ProductsPerCategory() {
                                         <div className="flex flex-row items-center justify-between gap-2">
                                             <div className="flex items-center gap-2">
                                                 <Label className="text-sm font-semibold">
-                                                    Min Price:
+                                                    {t('min_price', 'Min Price')}:
                                                     <Input
                                                         type="number"
                                                         value={priceRange.min === 0 ? '' : priceRange.min}
@@ -340,13 +330,13 @@ export default function ProductsPerCategory() {
                                             </div>
                                             <span>
                                                 <Label className="text-sm font-semibold">
-                                                    <span className="invisible">to</span>
+                                                    <span className="invisible">{t('to', 'to')}</span>
                                                     <Minus />
                                                 </Label>
                                             </span>
                                             <div className="flex items-center gap-2">
                                                 <Label className="text-sm font-semibold">
-                                                    Max Price:
+                                                    {t('max_price', 'Max Price')}:
                                                     <Input
                                                         type="number"
                                                         value={priceRange.max === 0 ? '' : priceRange.max}
@@ -369,7 +359,7 @@ export default function ProductsPerCategory() {
                             </Popover>
                         </div>
                         <div className="inline-flex flex-row items-center gap-2">
-                            <span className="text-sm font-semibold">Sort by:</span>
+                            <span className="text-sm font-semibold">{t('sort_by', 'Sort by')}:</span>
                             <DropdownMenu modal={false}>
                                 <DropdownMenuTrigger asChild>
                                     <Button variant="outline" className="inline-flex min-w-48 items-center justify-between gap-2">
@@ -399,7 +389,7 @@ export default function ProductsPerCategory() {
                         <div className="mb-4 flex flex-row flex-wrap items-center gap-3 border-y py-3">
                             {availability['in-stock'] && (
                                 <FilterBadge
-                                    label="Available"
+                                    label={t('available', 'Available')}
                                     onClear={() => {
                                         setAvailability((prev) => ({
                                             ...prev,
@@ -411,7 +401,7 @@ export default function ProductsPerCategory() {
                             )}
                             {availability['out-of-stock'] && (
                                 <FilterBadge
-                                    label="Out of Stock"
+                                    label={t('out_of_stock', 'Out of Stock')}
                                     onClear={() => {
                                         setAvailability((prev) => ({
                                             ...prev,
@@ -423,7 +413,7 @@ export default function ProductsPerCategory() {
                             )}
                             {priceRange.min > 0 && (
                                 <FilterBadge
-                                    label={`Min Price: ${priceRange.min}`}
+                                    label={`${t('min_price', 'Min Price')}: ${priceRange.min}`}
                                     onClear={() => {
                                         setPriceRange((prev) => ({ ...prev, min: 0 }));
                                         filtersChanged.current = true;
@@ -432,7 +422,7 @@ export default function ProductsPerCategory() {
                             )}
                             {priceRange.max > 0 && (
                                 <FilterBadge
-                                    label={`Max Price: ${priceRange.max}`}
+                                    label={`${t('max_price', 'Max Price')}: ${priceRange.max}`}
                                     onClear={() => {
                                         setPriceRange((prev) => ({ ...prev, max: 0 }));
                                         filtersChanged.current = true;
@@ -440,7 +430,7 @@ export default function ProductsPerCategory() {
                                 />
                             )}
                             <Button onClick={() => resetAllFilters()} variant="outline" className="inline-flex items-center gap-2">
-                                <span className="text-sm font-semibold">Reset All Filters</span>
+                                <span className="text-sm font-semibold">{t('reset_all_filters', 'Reset All Filters')}</span>
                             </Button>
                         </div>
                     ) : null}
@@ -453,7 +443,7 @@ export default function ProductsPerCategory() {
                         parent={({ children }) => <div className="grid grid-cols-2 gap-5 md:grid-cols-3 lg:grid-cols-4 lg:gap-8">{children}</div>}
                         emptyMessage={
                             <div className="col-span-full flex min-h-52 items-center justify-center text-center text-gray-500">
-                                <p>No products found</p>
+                                <p>{t('no_products_found', 'No products found')}</p>
                             </div>
                         }
                         renderItem={(product: Product, ref) => (

@@ -13,7 +13,8 @@ class CodeSeeder extends Seeder
     public function run(): void
     {
         Code::firstOrCreate([
-            'access_code' => '123',
+            'identifier' => hash('SHA256', '5Bl/Q5hxc8WfpPKKA8LJhw=='),
+            'access_code' => \Hash::make('123'),
         ]);
     }
 }

@@ -1,5 +1,6 @@
 import { Menu, ShoppingBag, Trash } from 'lucide-react';
 
+import LocaleDropdown from '@/components/custom/locale-dropdown';
 import QuantityInput from '@/components/custom/qty-input';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
@@ -11,12 +12,13 @@ import {
     NavigationMenuList,
     NavigationMenuTrigger,
 } from '@/components/ui/navigation-menu';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { fetchCheckoutRedirectUrl } from '@/lib/utils';
+import { useTranslations } from '@/hooks/use-translations';
+import { currencyFormatter } from '@/lib/global';
+import { fetchCheckoutRedirectUrl, localizedRouteName } from '@/lib/utils';
 import { useCartStore } from '@/stores/cart';
-import { Product } from '@/types';
-import { Link, router } from '@inertiajs/react';
+import { Product, SharedData } from '@/types';
+import { Link, router, usePage } from '@inertiajs/react';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
@@ -32,26 +34,13 @@ interface NavbarProps {
     logo?: {
         url: string;
         title: string;
+        img?: {
+            src: string;
+            alt: string;
+        };
     };
     menu?: MenuItem[];
 }
-
-const LocaleDropdown = () => {
-    return (
-        <div className="hidden">
-            <Select>
-                <SelectTrigger className="w-40">
-                    <SelectValue placeholder="English" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem value="en">English</SelectItem>
-                    <SelectItem value="id">Bahasa Indonesia</SelectItem>
-                    <SelectItem value="cn">简体中文</SelectItem>
-                </SelectContent>
-            </Select>
-        </div>
-    );
-};
 
 const SearchInput = () => {
     return (
@@ -77,6 +66,8 @@ const ShoppingCart = () => {
     const rawSetCartQty = useCartStore((state) => state.setCartQty);
     const rawRemoveFromCart = useCartStore((state) => state.removeFromCart);
     const [cart, setCart] = useState<ShoppingCartItem[]>([]);
+    const { locale } = usePage<SharedData>().props;
+    const { t } = useTranslations();
 
     const handleUpdateCartQty = (slug: string, qty: number) => {
         setCart((prev) => prev.map((item) => (item.slug === slug ? { ...item, qty } : item)));
@@ -93,7 +84,7 @@ const ShoppingCart = () => {
         const controller = new AbortController();
         axios
             .post(
-                route('products.cart'),
+                route(localizedRouteName('products.cart', locale)),
                 {
                     cart: cartStorage.map((item) => ({
                         slug: item.slug,
@@ -140,16 +131,18 @@ const ShoppingCart = () => {
 
                 <SheetContent className="w-11/12">
                     <SheetHeader>
-                        <SheetTitle>Your Cart</SheetTitle>
+                        <SheetTitle>{t('your_cart', 'Your Cart')}</SheetTitle>
                     </SheetHeader>
                     <div className="h-[calc(100%-var(--spacing)*4*2*2-0.5rem)] px-3 pb-2">
                         {cart.length === 0 ? (
-                            <div className="inline-flex h-full w-full items-center justify-center text-muted-foreground">Your cart is empty</div>
+                            <div className="inline-flex h-full w-full items-center justify-center text-muted-foreground">
+                                {t('your_cart_is_empty', 'Your cart is empty')}
+                            </div>
                         ) : (
                             <>
                                 <div className="flex flex-row justify-between">
-                                    <span>Items</span>
-                                    <span>Total</span>
+                                    <span>{t('items', 'Items')}</span>
+                                    <span>{t('total', 'Total')}</span>
                                 </div>
                                 <div className="h-[calc(100%-(var(--spacing)*18+var(--spacing)*10))] overflow-y-auto">
                                     <ul className="scroll-m-2 space-y-2">
@@ -164,11 +157,9 @@ const ShoppingCart = () => {
                                                     <div className="flex flex-col">
                                                         <span className="text-lg font-bold">{item.title}</span>
                                                         <span className="text-sm text-muted-foreground">
-                                                            {parseFloat(item.price).toLocaleString('en-US', {
-                                                                currency: 'USD',
-                                                                style: 'currency',
-                                                            })}{' '}
-                                                            &bull; {item.stock} item{item.stock > 1 ? 's' : ''} left
+                                                            {currencyFormatter.format(parseFloat(item.price))} &bull; {item.stock}{' '}
+                                                            {item.stock > 1 ? t('items', 'items').toLowerCase() : t('item', 'item').toLowerCase()}{' '}
+                                                            {t('left', 'left').toLowerCase()}
                                                         </span>
                                                         <div className="flex w-fit origin-left scale-90 flex-row items-center gap-2">
                                                             <QuantityInput
@@ -183,12 +174,7 @@ const ShoppingCart = () => {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <span>
-                                                    {(parseFloat(item.price) * item.qty).toLocaleString('en-US', {
-                                                        currency: 'USD',
-                                                        style: 'currency',
-                                                    })}
-                                                </span>
+                                                <span>{currencyFormatter.format(parseFloat(item.price) * item.qty)}</span>
                                             </li>
                                         ))}
                                     </ul>
@@ -197,20 +183,16 @@ const ShoppingCart = () => {
                         )}
                         <div className="h-20 w-full">
                             <div className="flex items-center justify-between border-t py-2">
-                                <span className="text-lg font-semibold">Total</span>
+                                <span className="text-lg font-semibold">{t('total', 'Total')}</span>
                                 <span className="text-lg font-semibold">
-                                    {cart
-                                        .reduce((total, item) => total + parseFloat(item.price) * item.qty, 0)
-                                        .toLocaleString('en-US', {
-                                            currency: 'USD',
-                                            style: 'currency',
-                                        })}
+                                    {currencyFormatter.format(cart.reduce((total, item) => total + parseFloat(item.price) * item.qty, 0))}
                                 </span>
                             </div>
                             <Button
                                 className="w-full"
                                 onClick={() => {
                                     fetchCheckoutRedirectUrl(
+                                        locale,
                                         cart.map((item) => ({
                                             slug: item.slug,
                                             qty: item.qty,
@@ -227,7 +209,7 @@ const ShoppingCart = () => {
                                     );
                                 }}
                             >
-                                Checkout
+                                {t('checkout', 'Checkout')}
                             </Button>
                         </div>
                     </div>
@@ -241,6 +223,10 @@ const Navbar = ({
     logo = {
         url: 'https://www.shadcnblocks.com',
         title: 'Shadcnblocks.com',
+        img: {
+            src: '/assets/logo.webp',
+            alt: 'Shadcnblocks Logo',
+        },
     },
     menu = [
         { title: 'Home', url: '/' },
@@ -292,7 +278,10 @@ const Navbar = ({
                     <div className="flex items-center gap-6">
                         {/* Logo */}
                         <Link href={logo.url} className="flex items-center gap-2">
-                            <span className="text-lg font-semibold tracking-tighter">{logo.title}</span>
+                            <span className="rounded bg-black p-1">
+                                <img loading={'eager'} src={logo?.img?.src} className="max-h-8" alt={logo?.img?.alt} />
+                            </span>
+                            {/*<span className="text-lg font-semibold tracking-tighter">{logo.title}</span>*/}
                         </Link>
                         <div className="flex items-center">
                             <NavigationMenu>
@@ -312,7 +301,10 @@ const Navbar = ({
                     <div className="flex items-center justify-between">
                         {/* Logo */}
                         <Link href={logo.url} className="flex items-center gap-2">
-                            <span className="text-lg font-semibold tracking-tighter">{logo.title}</span>
+                            {/*<span className="text-lg font-semibold tracking-tighter">{logo.title}</span>*/}
+                            <span className="rounded bg-black p-1">
+                                <img src={logo?.img?.src} className="max-h-8" alt={logo?.img?.alt} />
+                            </span>
                         </Link>
                         <div className="flex flex-row gap-2">
                             <ShoppingCart />

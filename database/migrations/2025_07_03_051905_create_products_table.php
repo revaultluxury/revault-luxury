@@ -13,8 +13,6 @@ return new class extends Migration {
         Schema::create('products', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('slug')->unique();
-            $table->string('title');
-            $table->text('description')->nullable();
             $table->uuid('category_id');
             $table->decimal('price', 10, 2);
             $table->integer('stock')->default(0);
@@ -27,6 +25,17 @@ return new class extends Migration {
             $table->timestamps();
             $table->softDeletes();
         });
+        Schema::create('products_translations', function (Blueprint $table) {
+            $table->id();
+
+            $table->uuid('product_id');
+            $table->string('locale')->index();
+            $table->string('title');
+            $table->text('description')->nullable();
+
+            $table->unique(['product_id', 'locale']);
+            $table->foreign('product_id')->references('id')->on('products');
+        });
     }
 
     /**
@@ -34,6 +43,7 @@ return new class extends Migration {
      */
     public function down(): void
     {
+        Schema::dropIfExists('products_translations');
         Schema::dropIfExists('products');
     }
 };

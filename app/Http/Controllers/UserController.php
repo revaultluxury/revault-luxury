@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Checkout;
 use App\Models\DetailTransaction;
+use App\Models\DetailTransactionTranslation;
 use App\Models\Product;
 use App\PaymentGateway\PaymentGateway;
 use Carbon\Carbon;
@@ -90,37 +91,44 @@ class UserController extends Controller
             $query->where('price', '<=', $request->input('price_max'));
         }
 
+        $query->orderByRaw('CASE WHEN stock > 0 THEN 0 ELSE 1 END');
+
+        $locale = app()->getLocale();
+        $query->join('products_translations as pt', function ($join) use ($locale) {
+            $join->on('products.id', '=', 'pt.product_id')
+                ->where('pt.locale', '=', $locale);
+        });
+        $query->addSelect('products.*');
+
         // ✅ Sorting
         switch ($request->input('sort_by')) {
             case 'name-asc':
-                $query->orderBy('title', 'asc');
+                $query->orderBy('pt.title', 'asc')->orderBy('id', 'asc');
                 break;
             case 'name-desc':
-                $query->orderBy('title', 'desc');
+                $query->orderBy('pt.title', 'desc')->orderBy('id', 'desc');
                 break;
             case 'price-asc':
-                $query->orderBy('price', 'asc');
+                $query->orderBy('price', 'asc')->orderBy('id', 'asc');
                 break;
             case 'price-desc':
-                $query->orderBy('price', 'desc');
+                $query->orderBy('price', 'desc')->orderBy('id', 'desc');
                 break;
             case 'created-at-asc':
-                $query->orderBy('created_at', 'asc');
+                $query->orderBy('created_at', 'asc')->orderBy('id', 'asc');
                 break;
             case 'created-at-desc':
-                $query->orderBy('created_at', 'desc');
+                $query->orderBy('created_at', 'desc')->orderBy('id', 'desc');
                 break;
             case 'best-seller':
-                $query->orderBy('sold', 'desc');
+                $query->orderBy('sold', 'desc')->orderBy('id', 'desc');
                 break;
             default:
-                $query->orderBy('updated_at', 'desc');
+                $query->orderBy('updated_at', 'desc')->orderBy('id', 'desc');
                 break;
         }
 
-        $query->orderByRaw('CASE WHEN stock > 0 THEN 0 ELSE 1 END');
-
-        $products = $query->cursorPaginate(12)->withQueryString();
+        $products = $query->paginate(12)->withQueryString();
 
         $parameter = [];
 
@@ -198,13 +206,11 @@ class UserController extends Controller
             ->diff($foundSlugs)
             ->values();
 
-
-        $products = Product::with(['category', 'galleries'])
+        $products = Product::withTranslation()->with(['category', 'galleries'])
             ->whereIn('slug', collect($validatedCart)->pluck('slug'))
             ->where('status', 'active')
             ->select([
                 'id',
-                'title',
                 'slug',
                 'price',
                 'stock',
@@ -235,7 +241,6 @@ class UserController extends Controller
             ->where('status', 'active')
             ->select([
                 'id',
-                'title',
                 'slug',
                 'price',
                 'category_id'
@@ -252,7 +257,6 @@ class UserController extends Controller
             'path' => $checkout->path,
         ]);
     }
-
 
     private function checkoutValidation(array $data): \Illuminate\Validation\Validator
     {
@@ -351,29 +355,6 @@ class UserController extends Controller
 
             // Save shipping checkbox
             'save_shipping' => 'required|boolean',
-        ], [], [
-            // Attribute names (for cleaner error messages)
-            'contact' => 'Contact',
-
-            'shipping.first_name' => 'Shipping First Name',
-            'shipping.last_name' => 'Shipping Last Name',
-            'shipping.address' => 'Shipping Address',
-            'shipping.detail_address' => 'Shipping Detail Address',
-            'shipping.city' => 'Shipping City',
-            'shipping.province' => 'Shipping Province',
-            'shipping.postal_code' => 'Shipping Postal Code',
-            'shipping.country' => 'Shipping Country',
-
-            'billing.first_name' => 'Billing First Name',
-            'billing.last_name' => 'Billing Last Name',
-            'billing.address' => 'Billing Address',
-            'billing.detail_address' => 'Billing Detail Address',
-            'billing.city' => 'Billing City',
-            'billing.province' => 'Billing Province',
-            'billing.postal_code' => 'Billing Postal Code',
-            'billing.country' => 'Billing Country',
-
-            'save_shipping' => 'Save Shipping Preference',
         ]);
     }
 
@@ -413,6 +394,10 @@ class UserController extends Controller
             $totalPrice = 0;
             $totalWeight = 0;
             $detailTransactions = [];
+            $translationRows = [];
+
+            $detailId = (string)Str::uuid();
+            $locale = app()->getLocale();
 
             foreach ($products as $product) {
                 $item = $itemsBySlug->get($product->slug);
@@ -420,17 +405,32 @@ class UserController extends Controller
                 $totalPrice += $product->price * $qty;
                 $totalWeight += $product->weight * $qty;
                 $detailTransactions[] = [
+                    'id' => $detailId,
                     'product_id' => $product->id,
                     'transaction_id' => null, // Will be set later
                     'snapshot_image' => $product->galleries->first()->media_url ?? null,
-                    'snapshot_title' => $product->title,
-                    'snapshot_description' => $product->description ?? null,
-                    'snapshot_category' => $product->category->name,
                     'snapshot_price' => $product->price,
                     'snapshot_weight' => $product->weight,
                     'quantity' => $qty,
                     'subtotal' => $product->price * $qty,
                 ];
+
+                foreach (config('app.supported_locales') as $supportedLocale) {
+                    $productTranslated = $product->getTranslation($supportedLocale);
+
+                    if (!$productTranslated?->title) {
+                        continue;
+                    }
+
+                    // Create translation row for each locale
+                    $translationRows[] = [
+                        'details_transaction_id' => $detailId,
+                        'locale' => $supportedLocale,
+                        'snapshot_title' => $productTranslated->title,
+                        'snapshot_description' => $productTranslated->description ?? null,
+                        'snapshot_category' => $product->category->getTranslation($supportedLocale)->name,
+                    ];
+                }
             }
 
             $transactionHeader = $checkout->transaction()->create([
@@ -463,26 +463,31 @@ class UserController extends Controller
             }
 
             DetailTransaction::insert($detailTransactions);
+            DetailTransactionTranslation::insert($translationRows);
 
-            $currency = 16000; // todo
+            $currency = 1; // todo
 
             $paymentGatewayPayload = [
-                'product' => collect($detailTransactions)->pluck('snapshot_title')->toArray(),
-                'qty' => collect($detailTransactions)->pluck('quantity')->map(fn($qty) => (string)$qty)->toArray(),
-                'price' => collect($detailTransactions)->pluck('snapshot_price')->map(fn($price) => (string)$price * $currency)->toArray(),
-                'description' => collect($detailTransactions)
-                    ->pluck('snapshot_description')
-                    ->map(function ($desc) {
-                        return Str::limit(strip_tags($desc), 100); // limit to 100 chars if needed
-                    })
+                'product' => collect($translationRows)
+                    ->where('locale', $locale === 'id' ? 'id' : 'en')
+                    ->pluck('snapshot_title')
                     ->toArray(),
+                'description' => collect($translationRows)
+                    ->where('locale', $locale === 'id' ? 'id' : 'en')
+                    ->pluck('snapshot_description')
+                    ->map(fn($desc) => Str::limit(strip_tags($desc), 100))
+                    ->toArray(),
+
+                'qty' => collect($detailTransactions)->pluck('quantity')->map(fn($qty) => (string)$qty)->toArray(),
+                'price' => collect($detailTransactions)->pluck('snapshot_price')->map(fn($price) => (string)($price * $currency))->toArray(),
                 'imageUrl' => collect($detailTransactions)->pluck('snapshot_image')->toArray(),
 
                 'referenceId' => $transactionHeader->invoice_number,
-                'returnUrl' => route('index'), //todo
-                'cancelUrl' => route('index'), //todo
+                'returnUrl' => route($locale === 'en' ? 'index' : "{$locale}.index"), //todo
+                'cancelUrl' => route($locale === 'en' ? 'index' : "{$locale}.index"), //todo
                 'notifyUrl' => route('checkout.notification'),
                 'buyerName' => $transactionHeader->customer_billing_first_name . ' ' . $transactionHeader->customer_billing_last_name,
+                'lang' => $locale === 'id' ? 'id' : 'en',
                 ...(filter_var($transactionHeader->customer_contact, FILTER_VALIDATE_EMAIL)
                     ? ['buyerEmail' => $transactionHeader->customer_contact]
                     : ['buyerPhone' => $transactionHeader->customer_contact]
@@ -515,5 +520,4 @@ class UserController extends Controller
             ]);
         }
     }
-
 }

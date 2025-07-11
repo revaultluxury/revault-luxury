@@ -25,10 +25,6 @@ class ProductFactory extends Factory
 
         return [
             'slug' => Str::slug($title) . '-' . Str::random(6),
-            'title' => $title,
-            'description' => $this->faker->boolean(80)
-                ? fn() => implode('', array_map(fn($p) => "<p>$p</p>", $this->faker->paragraphs($this->faker->numberBetween(1, 9))))
-                : null,
             'category_id' => Category::inRandomOrder()->first()->id
                 ?? Category::factory()->create()->id,
             'price' => $this->faker->randomFloat(2, 10, 10000),
@@ -42,7 +38,30 @@ class ProductFactory extends Factory
     public function configure(): ProductFactory|Factory
     {
         return $this->afterCreating(function (Product $product) {
-            // Create product galleries
+            $locales = ['en', 'id', 'cn'];
+
+            foreach ($locales as $locale) {
+                $localeFaker = \Faker\Factory::create(match ($locale) {
+                    'en' => 'en_US',
+                    'id' => 'id_ID',
+                    'cn' => 'zh_CN',
+                    default => 'en_US',
+                });
+
+                $title = $localeFaker->name();
+                $description = $localeFaker->boolean(80)
+                    ? collect($localeFaker->paragraphs($localeFaker->numberBetween(1, 5)))
+                        ->map(fn($p) => "<p>$p</p>")
+                        ->implode('')
+                    : null;
+
+                $product->translateOrNew($locale)->title = $title;
+                $product->translateOrNew($locale)->description = $description;
+            }
+
+            $product->save();
+
+
             $galleryCount = $this->faker->numberBetween(1, 5);
             for ($i = 0; $i < $galleryCount; $i++) {
                 $imageText = Str::random(8);
