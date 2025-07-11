@@ -1,4 +1,5 @@
 import Combobox from '@/components/custom/combobox';
+import PreviewMedia from '@/components/custom/preview-media';
 import RichTextEditor from '@/components/custom/rich-text-editor';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,40 +9,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import AdminLayout from '@/layouts/custom/admin-layout';
 import { Product, SharedData } from '@/types';
 import { router, useForm, usePage } from '@inertiajs/react';
-
-/*const PreviewMedia = ({ media, onChange }: { media: File[]; onChange: (updatedMedia: File[]) => void }) => {
-    const [mediaList, setMediaList] = useState<
-        {
-            image: File;
-            status: 'removed' | 'unchanged' | 'new';
-        }[]
-    >(media.map((file) => ({ image: file, status: 'unchanged' })));
-
-    return (
-        <div className="flex h-96 w-full flex-wrap gap-5 overflow-y-auto rounded border border-dashed p-5 shadow">
-            <div className="relative flex size-32 items-center justify-center rounded border-2 p-0.5">
-                <img src="https://placehold.jp/c7c7c7/000000/640x480.png?text=eHjMf1QD" className="w-full object-contain" alt="" />
-                <button
-                    type="button"
-                    className="absolute top-0 right-0 inline-flex size-6 translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-red-500 text-white"
-                >
-                    <X className="size-4" />
-                </button>
-            </div>
-            <div className="size-32 bg-blue-300"></div>
-            <div className="size-32 bg-blue-300"></div>
-            <div className="size-32 bg-blue-300"></div>
-            <div className="size-32 bg-blue-300"></div>
-            <div className="size-32 bg-blue-300"></div>
-            <div className="size-32 bg-blue-300"></div>
-            <div className="size-32 bg-blue-300"></div>
-            <div className="size-32 bg-blue-300"></div>
-            <div className="size-32 bg-blue-300"></div>
-            <div className="size-32 bg-blue-300"></div>
-            <div className="size-32 bg-blue-300"></div>
-        </div>
-    );
-};*/
 
 export default function EditProducts() {
     const { categories, product } = usePage<
@@ -59,6 +26,7 @@ export default function EditProducts() {
         stock: number;
         weight: number;
         status: string;
+        remove_media: string[] | null;
     }>({
         title: product.title,
         description: product.description,
@@ -68,6 +36,7 @@ export default function EditProducts() {
         stock: product.stock,
         weight: parseInt(product.weight),
         status: product.status,
+        remove_media: null,
     });
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -102,13 +71,29 @@ export default function EditProducts() {
                                     {errors.description && <p className="text-sm text-red-500">{errors.description}</p>}
                                 </div>
                                 <div className="grid w-full items-center gap-3">
-                                    <Label className="grid w-full max-w-lg items-center gap-3">
-                                        Media
-                                        <Input type="file" multiple onChange={(e) => setData('media', Array.from(e.target.files ?? []))} />
-                                    </Label>
-                                    {errors.media && <p className="text-sm text-red-500">{errors.media}</p>}
-                                    {/*<PreviewMedia media={data.media} />*/}
-                                    <div className="flex h-96 w-full flex-wrap gap-5 overflow-y-auto rounded border border-dashed p-5 shadow"></div>
+                                    {/*<Label className="grid w-full max-w-lg items-center gap-3">*/}
+                                    {/*    Media*/}
+                                    {/*    <Input*/}
+                                    {/*        type="file"*/}
+                                    {/*        multiple*/}
+                                    {/*        // onChange={(e) => setData('media', Array.from(e.target.files ?? []))}*/}
+                                    {/*    />*/}
+                                    {/*</Label>*/}
+                                    {/*{errors.media && <p className="text-sm text-red-500">{errors.media}</p>}*/}
+                                    <PreviewMedia
+                                        onChange={(newMedia, removedMedia) => {
+                                            setData('media', newMedia);
+                                            setData('remove_media', removedMedia.length > 0 ? removedMedia : null);
+                                        }}
+                                        error={Object.keys(errors)
+                                            .filter((key) => key.startsWith('media.'))
+                                            .map((key) => (errors as Record<string, string>)[key])
+                                            .join(', ')}
+                                        initialMedia={product.galleries.map((gallery) => ({
+                                            id: gallery.id,
+                                            url: gallery.media_url,
+                                        }))}
+                                    />
                                 </div>
 
                                 <Label className="grid w-full max-w-xs items-center gap-3">
