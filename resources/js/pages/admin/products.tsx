@@ -48,8 +48,8 @@ export default function ShowProducts() {
                     <CardTitle>View Products</CardTitle>
                     <CardDescription>List of products</CardDescription>
                 </CardHeader>
-                <CardContent className="">
-                    <div className={`w-full space-y-5 overflow-x-auto whitespace-nowrap`}>
+                <CardContent className="flex w-full">
+                    <div className={`w-0 grow space-y-5 overflow-x-auto whitespace-nowrap`}>
                         <div className="flex p-4">
                             <Input type="text" placeholder="Search by title" value={input} onChange={(e) => setInput(e.target.value)} />
                         </div>

@@ -133,7 +133,8 @@ export type Transaction = {
     customer_billing_province: string;
     customer_billing_postal_code: string;
     customer_billing_country: string;
-    total_amount: string;
+    subtotal_amount: string;
+    shipping_cost: string;
     total_weight: number;
     status: string;
     created_at: string;

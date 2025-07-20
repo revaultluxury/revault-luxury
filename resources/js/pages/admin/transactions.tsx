@@ -53,8 +53,8 @@ export default function AdminTransactions() {
                     <CardTitle>View Transactions</CardTitle>
                     <CardDescription>List of transactions</CardDescription>
                 </CardHeader>
-                <CardContent className="">
-                    <div className={`w-full space-y-5 overflow-x-auto whitespace-nowrap`}>
+                <CardContent className="flex w-full">
+                    <div className={`w-0 grow space-y-5 overflow-x-auto whitespace-nowrap`}>
                         <div className="flex p-4">
                             <Input type="text" placeholder="Search by invoice number" value={input} onChange={(e) => setInput(e.target.value)} />
                         </div>
@@ -63,6 +63,8 @@ export default function AdminTransactions() {
                                 <TableRow>
                                     <TableHead>Invoice</TableHead>
                                     <TableHead>Customer</TableHead>
+                                    <TableHead>Shipping Address</TableHead>
+                                    <TableHead>Shipping Cost</TableHead>
                                     <TableHead>Total</TableHead>
                                     <TableHead>Status</TableHead>
                                     <TableHead>Transaction Date</TableHead>
@@ -79,8 +81,18 @@ export default function AdminTransactions() {
                                                 <div className="text-xs text-muted-foreground">{tx.customer_contact}</div>
                                             </TableCell>
                                             <TableCell>
-                                                {currencyFormatter.format(parseFloat(tx.total_amount))}{' '}
+                                                {tx.customer_shipping_address}, {tx.customer_shipping_city}, {tx.customer_shipping_country} -{' '}
+                                                {tx.customer_shipping_postal_code}
+                                                {tx.customer_shipping_detail_address && (
+                                                    <div className="text-xs text-muted-foreground">{tx.customer_shipping_detail_address}</div>
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                {currencyFormatter.format(parseFloat(tx.shipping_cost))}{' '}
                                                 <span className="text-xs text-muted-foreground">({tx.total_weight}g)</span>
+                                            </TableCell>
+                                            <TableCell>
+                                                {currencyFormatter.format(parseFloat(tx.subtotal_amount) + parseFloat(tx.shipping_cost))}
                                             </TableCell>
                                             <TableCell>
                                                 <Badge
@@ -108,7 +120,7 @@ export default function AdminTransactions() {
 
                                         {openTransactionId === tx.id && (
                                             <TableRow>
-                                                <TableCell colSpan={6}>
+                                                <TableCell colSpan={8}>
                                                     <Table className="mt-2">
                                                         <TableHeader>
                                                             <TableRow>
