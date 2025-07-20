@@ -35,7 +35,8 @@ class Transaction extends Model
         'customer_billing_province',
         'customer_billing_postal_code',
         'customer_billing_country',
-        'total_amount',
+        'subtotal_amount',
+        'shipping_cost',
         'total_weight',
         'status',
     ];

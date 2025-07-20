@@ -69,4 +69,7 @@ return [
     'order_summary' => 'Order Summary',
     'loading' => 'Loading',
     'terms_and_conditions' => 'Terms and Conditions',
+    'shipping_cost' => 'Shipping Cost',
+    'subtotal' => 'Subtotal',
+    'not_available' => 'Not Available',
 ];

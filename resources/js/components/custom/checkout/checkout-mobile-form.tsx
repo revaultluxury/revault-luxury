@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
 import { useTranslations } from '@/hooks/use-translations';
 import { currencyFormatter } from '@/lib/global';
 import { InertiaFormProps } from '@inertiajs/react';
@@ -24,6 +25,8 @@ type MobileFormProps = {
     setBillingState: (state: BillingState) => void;
     checkoutItems: CheckoutItem[];
     total: number;
+    subtotal: number;
+    shippingCost: number;
     onSubmit: (e: React.FormEvent) => void;
 };
 
@@ -35,6 +38,8 @@ export const CheckoutMobileForm = ({
     setBillingState,
     checkoutItems,
     total,
+    subtotal,
+    shippingCost,
     onSubmit,
 }: MobileFormProps) => {
     const { data, setData, errors } = form;
@@ -50,7 +55,7 @@ export const CheckoutMobileForm = ({
                     <CardHeader className="gap-6">
                         <CardTitle className="inline-flex w-full flex-row items-center justify-between">
                             <span>{t('order_summary', 'Order Summary')}</span>
-                            <span className="text-lg font-bold">{currencyFormatter.format(total)}</span>
+                            <span className="text-lg font-bold">{currencyFormatter.format(subtotal)}</span>
                         </CardTitle>
                         <CardDescription className="flex flex-row items-center justify-center gap-2">
                             <span className="pointer-events-none">{t('order_summary', 'Order Summary')}</span>
@@ -161,6 +166,13 @@ export const CheckoutMobileForm = ({
             {/* Total Card */}
             <Card>
                 <CardContent className="space-y-4">
+                    <div className="inline-flex w-full items-center justify-between">
+                        <span className="font-semibold">{t('shipping_cost', 'Shipping Cost')}:</span>
+                        <span className="text-lg font-bold">
+                            {shippingCost !== -1 ? currencyFormatter.format(shippingCost) : t('not_available', 'Not Available')}
+                        </span>
+                    </div>
+                    <Separator />
                     <div className="inline-flex w-full items-center justify-between">
                         <span className="font-bold">{t('total', 'Total')}:</span>
                         <span className="text-xl font-black">{currencyFormatter.format(total)}</span>

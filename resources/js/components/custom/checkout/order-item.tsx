@@ -7,7 +7,7 @@ export const OrderItem = ({ product, quantity }: { product: CheckoutItem; quanti
     return (
         <div className="flex w-full gap-2 border-b pb-4 last:border-b-0">
             <div className="inline-flex size-16 shrink-0 items-center justify-center rounded border-1 p-0.5 md:size-24">
-                <img src={product.galleries[0].media_url} loading="lazy" alt={product.title} className="w-full object-contain" />
+                <img src={product.galleries[0].media_url} loading="lazy" alt={product.title} className="h-full w-full object-contain" />
             </div>
             <div className="flex grow flex-col gap-2">
                 <span className="font-semibold">{product.title}</span>

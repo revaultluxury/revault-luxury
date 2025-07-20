@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             CodeSeeder::class,
             CategorySeeder::class,
             StaticWebsiteDatumSeeder::class,
+            ShippingCostSeeder::class,
         ]);
 
         if (app()->environment('local')) {

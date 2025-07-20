@@ -69,4 +69,7 @@ return [
     'order_summary' => 'Ringkasan Pesanan',
     'loading' => 'Memuat',
     'terms_and_conditions' => 'Syarat dan Ketentuan',
+    'shipping_cost' => 'Biaya Pengiriman',
+    'subtotal' => 'Subtotal',
+    'not_available' => 'Tidak Tersedia',
 ];

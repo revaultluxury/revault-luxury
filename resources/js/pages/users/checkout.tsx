@@ -6,6 +6,7 @@ import { useCartStore } from '@/stores/cart';
 import { useShippingInformationStore } from '@/stores/user-info';
 import { AccordionState, BillingState, CheckoutForm, CheckoutItem, SharedData } from '@/types';
 import { useForm, usePage } from '@inertiajs/react';
+import axios, { isAxiosError } from 'axios';
 import { useEffect, useState } from 'react';
 
 export default function Checkout() {
@@ -20,6 +21,11 @@ export default function Checkout() {
     const userInfo = useShippingInformationStore((state) => state.shippingInformation);
     const [orderAccordion, setOrderAccordion] = useState<AccordionState>('close');
     const [billingState, setBillingState] = useState<BillingState>('same');
+    const [shippingCost, setShippingCost] = useState<number>(0);
+
+    const subtotal = checkoutItems.reduce((sum, item) => sum + parseFloat(item.price) * item.qty, 0);
+
+    const [total, setTotal] = useState<number>(subtotal);
 
     const form = useForm<CheckoutForm>({
         contact: '',
@@ -56,6 +62,53 @@ export default function Checkout() {
         }
     }, [billingState, form.data.shipping]);
 
+    useEffect(() => {
+        const controller = new AbortController();
+
+        const timer = setTimeout(() => {
+            if (!form.data.shipping.country) {
+                setShippingCost(0);
+                return;
+            }
+
+            axios
+                .get<{ price: string }>(route(localizedRouteName('products.checkout.shipping-cost', locale)), {
+                    params: {
+                        country: form.data.shipping.country,
+                    },
+                    signal: controller.signal,
+                })
+                .then((response) => {
+                    setShippingCost(parseFloat(response.data.price));
+                })
+                .catch((error) => {
+                    if (!axios.isCancel(error)) {
+                        if (isAxiosError(error)) {
+                            if (error.status === 404) {
+                                setShippingCost(-1);
+                                return;
+                            }
+                        }
+                        console.error('Error fetching shipping cost:', error);
+                    }
+                });
+        }, 300);
+
+        return () => {
+            controller.abort();
+            clearTimeout(timer);
+        };
+    }, [form.data.shipping.country]);
+
+    useEffect(() => {
+        if (shippingCost < 0) {
+            setTotal(subtotal);
+            return;
+        }
+
+        setTotal(subtotal + shippingCost);
+    }, [subtotal, shippingCost]);
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -71,8 +124,6 @@ export default function Checkout() {
         });
     };
 
-    const total = checkoutItems.reduce((sum, item) => sum + parseFloat(item.price) * item.qty, 0);
-
     return (
         <>
             <CheckoutNavbar />
@@ -86,6 +137,8 @@ export default function Checkout() {
                     setBillingState={setBillingState}
                     checkoutItems={checkoutItems}
                     total={total}
+                    shippingCost={shippingCost}
+                    subtotal={subtotal}
                     onSubmit={handleSubmit}
                 />
 
@@ -97,6 +150,8 @@ export default function Checkout() {
                     setBillingState={setBillingState}
                     checkoutItems={checkoutItems}
                     total={total}
+                    shippingCost={shippingCost}
+                    subtotal={subtotal}
                     onSubmit={handleSubmit}
                 />
             </div>

@@ -6,6 +6,7 @@ use App\Models\Checkout;
 use App\Models\DetailTransaction;
 use App\Models\DetailTransactionTranslation;
 use App\Models\Product;
+use App\Models\ShippingCost;
 use App\PaymentGateway\PaymentGateway;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -433,6 +434,9 @@ class UserController extends Controller
                 }
             }
 
+            $defaultShipping = ShippingCost::max('price');
+            $shippingCost = ShippingCost::forCountry($validated['shipping']['country'])->value('price') ?? $defaultShipping;
+
             $transactionHeader = $checkout->transaction()->create([
                 'transaction_date' => Carbon::now(),
                 'customer_contact' => $validated['contact'],
@@ -452,7 +456,8 @@ class UserController extends Controller
                 'customer_billing_province' => $validated['billing']['province'],
                 'customer_billing_postal_code' => $validated['billing']['postal_code'],
                 'customer_billing_country' => $validated['billing']['country'],
-                'total_amount' => $totalPrice,
+                'shipping_cost' => $shippingCost,
+                'subtotal_amount' => $totalPrice,
                 'total_weight' => $totalWeight,
             ]);
 
@@ -468,23 +473,40 @@ class UserController extends Controller
             $currency = 1; // todo
 
             $paymentGatewayPayload = [
-                'product' => collect($translationRows)
-                    ->where('locale', $locale === 'id' ? 'id' : 'en')
-                    ->pluck('snapshot_title')
-                    ->toArray(),
-                'description' => collect($translationRows)
-                    ->where('locale', $locale === 'id' ? 'id' : 'en')
-                    ->pluck('snapshot_description')
-                    ->map(fn($desc) => Str::limit(strip_tags($desc), 100))
-                    ->toArray(),
+                'product' => [
+                    ...collect($translationRows)
+                        ->where('locale', $locale === 'id' ? 'id' : 'en')
+                        ->pluck('snapshot_title')
+                        ->toArray(),
+                    __('content.shipping_cost', locale: $locale === 'id' ? 'id' : 'en')
+                ],
+                'description' => [
+                    ...collect($translationRows)
+                        ->where('locale', $locale === 'id' ? 'id' : 'en')
+                        ->map(function ($item) {
+                            $desc = strip_tags($item['snapshot_description'] ?? '');
+                            return Str::limit($desc ?: ($item['snapshot_title'] ?? ''), 100);
+                        })
+                        ->toArray(),
+                    __('content.shipping_cost', locale: $locale === 'id' ? 'id' : 'en')
+                ],
 
-                'qty' => collect($detailTransactions)->pluck('quantity')->map(fn($qty) => (string)$qty)->toArray(),
-                'price' => collect($detailTransactions)->pluck('snapshot_price')->map(fn($price) => (string)($price * $currency))->toArray(),
-                'imageUrl' => collect($detailTransactions)->pluck('snapshot_image')->toArray(),
+                'qty' => [
+                    ...collect($detailTransactions)->pluck('quantity')->map(fn($qty) => (string)$qty)->toArray(),
+                    '1'
+                ],
+                'price' => [
+                    ...collect($detailTransactions)->pluck('snapshot_price')->map(fn($price) => (string)($price * $currency))->toArray(),
+                    (string)($shippingCost * $currency)
+                ],
+                'imageUrl' => [
+                    ...collect($detailTransactions)->pluck('snapshot_image')->toArray(),
+                    'https://placehold.jp/150x150.png?text=Shipping+Cost'
+                ],
 
                 'referenceId' => $transactionHeader->invoice_number,
-                'returnUrl' => route($locale === 'en' ? 'index' : "{$locale}.index"), //todo
-                'cancelUrl' => route($locale === 'en' ? 'index' : "{$locale}.index"), //todo
+                'returnUrl' => route($locale === 'en' ? 'index' : "{$locale}.index"),
+                'cancelUrl' => route($locale === 'en' ? 'index' : "{$locale}.index"),
                 'notifyUrl' => route('checkout.notification'),
                 'buyerName' => $transactionHeader->customer_billing_first_name . ' ' . $transactionHeader->customer_billing_last_name,
                 'lang' => $locale === 'id' ? 'id' : 'en',
@@ -519,5 +541,25 @@ class UserController extends Controller
                 'error' => $e->getMessage(),
             ]);
         }
+    }
+
+    public function checkShippingCost(Request $request)
+    {
+        if (!$request->expectsJson()) {
+            return redirect()->back()->withErrors([
+                'message' => 'Invalid request format. Expected JSON.',
+            ]);
+        }
+
+        $country = $request->query('country', '');
+        $shippingCost = ShippingCost::forCountry($country)->value('price');
+
+        if (!$shippingCost) {
+            $shippingCost = ShippingCost::max('price');
+        }
+
+        return response()->json([
+            'price' => $shippingCost,
+        ]);
     }
 }

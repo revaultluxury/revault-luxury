@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
 import { useTranslations } from '@/hooks/use-translations';
 import { currencyFormatter } from '@/lib/global';
 import { InertiaFormProps } from '@inertiajs/react';
@@ -21,16 +22,27 @@ type DesktopFormProps = {
     setBillingState: (state: BillingState) => void;
     checkoutItems: CheckoutItem[];
     total: number;
+    subtotal: number;
+    shippingCost: number;
     onSubmit: (e: React.FormEvent) => void;
 };
 
-export const CheckoutDesktopForm = ({ form, billingState, setBillingState, checkoutItems, total, onSubmit }: DesktopFormProps) => {
+export const CheckoutDesktopForm = ({
+    form,
+    billingState,
+    setBillingState,
+    checkoutItems,
+    total,
+    subtotal,
+    shippingCost,
+    onSubmit,
+}: DesktopFormProps) => {
     const { data, setData, errors } = form;
     const { t } = useTranslations();
     return (
         <form onSubmit={onSubmit} className="hidden lg:block">
             <div className="flex flex-row gap-6 pb-12">
-                <div className="max-w-xl space-y-5">
+                <div className="w-full max-w-xl space-y-5">
                     {/* Contact Card */}
                     <Card>
                         <CardHeader>
@@ -135,9 +147,22 @@ export const CheckoutDesktopForm = ({ form, billingState, setBillingState, check
                                 ))}
                             </div>
                         </CardContent>
-                        <CardFooter className="flex flex-row items-center justify-between">
-                            <span className="font-bold">{t('total', 'Total')}:</span>
-                            <span className="text-xl font-black">{currencyFormatter.format(total)}</span>
+                        <CardFooter className="flex flex-col">
+                            <div className="flex w-full flex-row items-center justify-between">
+                                <span className="font-semibold">{t('subtotal', 'Subtotal')}:</span>
+                                <span className="text-lg font-bold">{currencyFormatter.format(subtotal)}</span>
+                            </div>
+                            <div className="flex w-full flex-row items-center justify-between">
+                                <span className="font-semibold">{t('shipping_cost', 'Shipping Cost')}:</span>
+                                <span className="text-lg font-bold">
+                                    {shippingCost !== -1 ? currencyFormatter.format(shippingCost) : t('not_available', 'Not Available')}
+                                </span>
+                            </div>
+                            <Separator className="my-4" />
+                            <div className="flex w-full flex-row items-center justify-between">
+                                <span className="font-bold">{t('total', 'Total')}:</span>
+                                <span className="text-xl font-black">{currencyFormatter.format(total)}</span>
+                            </div>
                         </CardFooter>
                     </Card>
                 </div>

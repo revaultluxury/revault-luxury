@@ -33,6 +33,8 @@ foreach ($locales as $locale) {
                 ->name('products.checkout');
             Route::post('/session/{path}', [\App\Http\Controllers\UserController::class, 'checkoutSession'])
                 ->name('products.checkout.session');
+            Route::get('/shipping-cost', [\App\Http\Controllers\UserController::class, 'checkShippingCost'])
+                ->name('products.checkout.shipping-cost');
         });
 
         Route::prefix('products')->group(function () {
@@ -69,6 +71,8 @@ foreach ($locales as $locale) {
                     ->name("$locale.products.checkout");
                 Route::post('/session/{path}', [\App\Http\Controllers\UserController::class, 'checkoutSession'])
                     ->name("$locale.products.checkout.session");
+                Route::get('/shipping-cost', [\App\Http\Controllers\UserController::class, 'checkShippingCost'])
+                    ->name("$locale.products.checkout.shipping-cost");
             });
 
             Route::prefix('products')->group(function () use ($locale) {
