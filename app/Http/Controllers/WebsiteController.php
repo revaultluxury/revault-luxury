@@ -19,7 +19,7 @@ class WebsiteController extends Controller
             'title' => 'FAQ',
             'content' => $data->value,
             'image' => [
-                'src' => 'https://marketplace189.com/cdn/shop/files/man-sitting-in-city.jpg?v=1750609100&width=3840',
+                'src' => 'https://fls-9f56b3e7-34dc-42a4-9adf-f70180fad897.laravel.cloud/banner/banner-1.webp',
                 'alt' => 'FAQ Image'
             ]
         ]);
@@ -37,7 +37,7 @@ class WebsiteController extends Controller
             'title' => 'Payments',
             'content' => $data->value,
             'image' => [
-                'src' => 'https://marketplace189.com/cdn/shop/files/man-sitting-in-city.jpg?v=1750609100&width=3840',
+                'src' => 'https://fls-9f56b3e7-34dc-42a4-9adf-f70180fad897.laravel.cloud/banner/banner-1.webp',
                 'alt' => 'Payments Image'
             ]
         ]);
@@ -55,7 +55,7 @@ class WebsiteController extends Controller
             'title' => 'Shipping, Returns & Cancellations',
             'content' => $data->value,
             'image' => [
-                'src' => 'https://marketplace189.com/cdn/shop/files/man-sitting-in-city.jpg?v=1750609100&width=3840',
+                'src' => 'https://fls-9f56b3e7-34dc-42a4-9adf-f70180fad897.laravel.cloud/banner/banner-1.webp',
                 'alt' => 'Shipping, Returns & Cancellations Image'
             ]
         ]);
@@ -73,7 +73,7 @@ class WebsiteController extends Controller
             'title' => 'Shipping, Returns & Cancellations',
             'content' => $data->value,
             'image' => [
-                'src' => 'https://marketplace189.com/cdn/shop/files/man-sitting-in-city.jpg?v=1750609100&width=3840',
+                'src' => 'https://fls-9f56b3e7-34dc-42a4-9adf-f70180fad897.laravel.cloud/banner/banner-1.webp',
                 'alt' => 'Shipping, Returns & Cancellations Image'
             ]
         ]);
@@ -91,7 +91,7 @@ class WebsiteController extends Controller
             'title' => 'Shipping, Returns & Cancellations',
             'content' => $data->value,
             'image' => [
-                'src' => 'https://marketplace189.com/cdn/shop/files/man-sitting-in-city.jpg?v=1750609100&width=3840',
+                'src' => 'https://fls-9f56b3e7-34dc-42a4-9adf-f70180fad897.laravel.cloud/banner/banner-1.webp',
                 'alt' => 'Shipping, Returns & Cancellations Image'
             ]
         ]);
@@ -109,7 +109,7 @@ class WebsiteController extends Controller
             'title' => 'Contact Us',
             'content' => $data->value,
             'image' => [
-                'src' => 'https://marketplace189.com/cdn/shop/files/man-sitting-in-city.jpg?v=1750609100&width=3840',
+                'src' => 'https://fls-9f56b3e7-34dc-42a4-9adf-f70180fad897.laravel.cloud/banner/banner-1.webp',
                 'alt' => 'Contact Us Image'
             ]
         ]);
@@ -127,7 +127,7 @@ class WebsiteController extends Controller
             'title' => 'About Us',
             'content' => $data->value,
             'image' => [
-                'src' => 'https://marketplace189.com/cdn/shop/files/man-sitting-in-city.jpg?v=1750609100&width=3840',
+                'src' => 'https://fls-9f56b3e7-34dc-42a4-9adf-f70180fad897.laravel.cloud/banner/banner-1.webp',
                 'alt' => 'About Us Image'
             ]
         ]);
@@ -145,7 +145,7 @@ class WebsiteController extends Controller
             'title' => 'Privacy Policy',
             'content' => $data->value,
             'image' => [
-                'src' => 'https://marketplace189.com/cdn/shop/files/man-sitting-in-city.jpg?v=1750609100&width=3840',
+                'src' => 'https://fls-9f56b3e7-34dc-42a4-9adf-f70180fad897.laravel.cloud/banner/banner-1.webp',
                 'alt' => 'Privacy Policy Image'
             ]
         ]);
@@ -163,7 +163,7 @@ class WebsiteController extends Controller
             'title' => 'Cookie Policy',
             'content' => $data->value,
             'image' => [
-                'src' => 'https://marketplace189.com/cdn/shop/files/man-sitting-in-city.jpg?v=1750609100&width=3840',
+                'src' => 'https://fls-9f56b3e7-34dc-42a4-9adf-f70180fad897.laravel.cloud/banner/banner-1.webp',
                 'alt' => 'Cookie Policy Image'
             ]
         ]);
@@ -181,7 +181,7 @@ class WebsiteController extends Controller
             'title' => 'Terms and Conditions',
             'content' => $data->value,
             'image' => [
-                'src' => 'https://marketplace189.com/cdn/shop/files/man-sitting-in-city.jpg?v=1750609100&width=3840',
+                'src' => 'https://fls-9f56b3e7-34dc-42a4-9adf-f70180fad897.laravel.cloud/banner/banner-1.webp',
                 'alt' => 'Cookie Policy Image'
             ]
         ]);
